@@ -208,57 +208,48 @@ button {
   }
 
   function buildParcels() {
-    parcels = [];
+  parcels = [];
 
-    let id = 1001;
-    const step = 3;
+  let id = 1001;
+  const step = 2;
 
-    for (let lat = -54; lat <= 75; lat += step) {
-      for (let lon = -180; lon < 180; lon += step) {
-        const x = lon + step / 2;
-        const y = lat + step / 2;
+  for (let lat = -56; lat <= 76; lat += step) {
+    for (let lon = -180; lon < 180; lon += step) {
 
-        if (!d3.geoContains(land, [x, y])) {
-          continue;
-        }
+      const centerLat = lat + step / 2;
+      const centerLon = lon + step / 2;
 
-        const corners = [
-          [lon, lat],
-          [lon + step, lat],
-          [lon + step, lat + step],
-          [lon, lat + step]
-        ];
-
-        if (!corners.every(function (point) {
-          return d3.geoContains(land, point);
-        })) {
-          continue;
-        }
-
-        parcels.push({
-          type: "Feature",
-          properties: {
-            id: "EG-" + id++,
-            lat: y,
-            lon: x,
-            price: 500 + ((id * 137) % 9500)
-          },
-          geometry: {
-            type: "Polygon",
-            coordinates: [[
-              [lon, lat],
-              [lon + step, lat],
-              [lon + step, lat + step],
-              [lon, lat + step],
-              [lon, lat]
-            ]]
-          }
-        });
+      // Keep cells whose center lies on land.
+      if (!d3.geoContains(land, [centerLon, centerLat])) {
+        continue;
       }
+
+      const idValue = "EG-" + id++;
+
+      parcels.push({
+        type: "Feature",
+
+        properties: {
+          id: idValue,
+          lat: centerLat,
+          lon: centerLon,
+          price: 500 + ((id * 137) % 9500)
+        },
+
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [lon, lat],
+            [lon + step, lat],
+            [lon + step, lat + step],
+            [lon, lat + step],
+            [lon, lat]
+          ]]
+        }
+      });
     }
   }
-
-  async function start() {
+}
     try {
       message("1/3: Loading 3D Earth library...");
 
