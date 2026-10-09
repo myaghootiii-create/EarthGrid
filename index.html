@@ -4,259 +4,258 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EarthGrid | Explore the Earth</title>
+<title>EarthGrid | Real 3D Earth</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#050b16;color:#f4f7ff;font-family:Arial,sans-serif}
-header{padding:18px 22px;border-bottom:1px solid #24344a;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:23px;font-weight:bold;letter-spacing:1px}.logo span{color:#52e0bf}
+body{margin:0;background:#030814;color:#f4f7ff;font-family:Arial,sans-serif}
+header{padding:18px 22px;border-bottom:1px solid #203047;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:23px;font-weight:bold;letter-spacing:1px}.logo span{color:#53e4c2}
 header small{color:#9aacc3}
 main{max-width:1200px;margin:auto;padding:18px}
 .hero{text-align:center;padding:14px 0}
 h1{font-size:clamp(27px,5vw,43px);margin:8px 0}
-.hero p{color:#a2b3ca;line-height:1.6}
+.hero p{color:#9aacc3;line-height:1.6}
 .layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr);gap:16px}
-.globeBox,.panel{background:#0b1729;border:1px solid #23364e;border-radius:16px;overflow:hidden}
-.globeBox{position:relative;min-height:400px}
-#globe{width:100%;height:100%;min-height:400px;display:block;touch-action:none;cursor:grab}
+.globeBox{position:relative;background:radial-gradient(ellipse,#102746,#030814 72%);border:1px solid #23364e;border-radius:16px;overflow:hidden;min-height:420px}
+#globe{width:100%;height:420px;display:block;touch-action:none;cursor:grab}
 #globe:active{cursor:grabbing}
-.hint{position:absolute;bottom:12px;left:12px;right:12px;text-align:center;font-size:12px;color:#c0d0e4;background:#07111dcc;padding:9px;border-radius:8px;pointer-events:none}
-.panel{padding:20px}
+#loading{position:absolute;inset:0;display:grid;place-items:center;color:#b7c9df;pointer-events:none}
+.hint{position:absolute;bottom:10px;left:10px;right:10px;text-align:center;font-size:12px;color:#c0d0e4;background:#07111dcc;padding:9px;border-radius:8px;pointer-events:none}
+.panel{background:#0b1729;border:1px solid #23364e;border-radius:16px;padding:20px}
 .panel h2{font-size:18px;margin:0 0 14px}
 .pill{display:inline-block;padding:6px 10px;border-radius:20px;background:#143a38;color:#64ead0;font-size:12px}
 .id{font-size:24px;font-weight:bold;color:#62e5c8;margin:14px 0}
-.muted{color:#9aacc3;font-size:13px;line-height:1.6}
+.muted,.notice{color:#9aacc3;font-size:13px;line-height:1.7}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
-.stat{background:#101f33;padding:12px;border-radius:10px}
+.stat{background:#101f33;padding:12px;border-radius:10px;min-width:0}
 .stat span{font-size:12px;color:#9aacc3}.stat strong{display:block;margin-top:6px;overflow-wrap:anywhere}
 hr{border:0;border-top:1px solid #26364c;margin:20px 0}
-button{background:#52e0bf;border:0;border-radius:8px;padding:12px 15px;font-weight:bold;color:#06121d;cursor:pointer}
+button{background:#53e4c2;border:0;border-radius:8px;padding:12px 15px;font-weight:bold;color:#06121d;cursor:pointer}
 button.secondary{background:#172941;color:#eaf2ff;border:1px solid #32455d}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.notice{font-size:12px;color:#91a5bd;line-height:1.7;margin-top:18px}
+.notice{font-size:12px;margin-top:18px}
 footer{text-align:center;color:#71839c;padding:24px;font-size:12px}
-@media(max-width:760px){.layout{grid-template-columns:1fr}.globeBox{min-height:360px}#globe{min-height:360px}header small{font-size:10px}}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.globeBox{min-height:350px}#globe{height:350px}header small{font-size:10px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">EARTH<span>GRID</span></div>
-  <small>INTERACTIVE EARTH GRID</small>
+ <div class="logo">EARTH<span>GRID</span></div>
+ <small>REAL 3D EARTH</small>
 </header>
 <main>
-  <section class="hero">
-    <h1>Explore. Discover. Own.</h1>
-    <p>Select a grid cell on the globe to explore its location and demo ownership details.</p>
-  </section>
-  <div class="layout">
-    <div class="globeBox">
-      <canvas id="globe"></canvas>
-      <div class="hint">Drag to rotate · Scroll or pinch to zoom · Click a cell to select it</div>
-    </div>
-    <section class="panel">
-      <span class="pill">DEMO GRID</span>
-      <h2 style="margin-top:14px">Selected parcel</h2>
-      <div class="id" id="parcelId">EG-090-180</div>
-      <div class="muted">Every cell is identified by its latitude and longitude grid position.</div>
-      <div class="stats">
-        <div class="stat"><span>Latitude</span><strong id="lat">0.0°</strong></div>
-        <div class="stat"><span>Longitude</span><strong id="lon">0.0°</strong></div>
-        <div class="stat"><span>Demo price</span><strong id="price">$100.00</strong></div>
-        <div class="stat"><span>Grid cell</span><strong id="cellSize">10° × 10°</strong></div>
-      </div>
-      <hr>
-      <h2>Ownership details</h2>
-      <div class="stats">
-        <div class="stat"><span>Status</span><strong id="status">Unverified</strong></div>
-        <div class="stat"><span>Owner</span><strong id="owner">No owner data</strong></div>
-      </div>
-      <div class="actions">
-        <button id="random">Explore a cell</button>
-        <button id="reset" class="secondary">Reset view</button>
-      </div>
-      <p class="notice">Prototype only: parcel boundaries are a demonstration grid, not legal land boundaries. Prices and ownership are illustrative. No purchase or ownership transfer is available yet.</p>
-    </section>
+ <section class="hero">
+  <h1>Explore. Discover. Own.</h1>
+  <p>Explore a textured 3D Earth and select a grid cell.</p>
+ </section>
+ <div class="layout">
+  <div class="globeBox">
+   <div id="loading">Loading the Earth texture…</div>
+   <div id="globe"></div>
+   <div class="hint">Drag to rotate · Scroll to zoom · Click a grid cell</div>
   </div>
+  <section class="panel">
+   <span class="pill">INTERACTIVE GRID</span>
+   <h2 style="margin-top:14px">Selected parcel</h2>
+   <div class="id" id="parcelId">EG-09-18</div>
+   <div class="muted">Select a point on the globe to inspect its grid cell.</div>
+   <div class="stats">
+    <div class="stat"><span>Latitude</span><strong id="lat">0.00°</strong></div>
+    <div class="stat"><span>Longitude</span><strong id="lon">0.00°</strong></div>
+    <div class="stat"><span>Demo price</span><strong id="price">$100.00</strong></div>
+    <div class="stat"><span>Grid size</span><strong>10° × 10°</strong></div>
+   </div>
+   <hr>
+   <h2>Ownership details</h2>
+   <div class="stats">
+    <div class="stat"><span>Status</span><strong id="status">Unverified</strong></div>
+    <div class="stat"><span>Owner</span><strong id="owner">No owner data</strong></div>
+   </div>
+   <div class="actions">
+    <button id="random">Explore a cell</button>
+    <button class="secondary" id="reset">Reset view</button>
+   </div>
+   <p class="notice">Prototype only. Grid cells are illustrative, not legal land parcels. Prices and ownership are not verified. No purchase or transfer is available yet.</p>
+  </section>
+ </div>
 </main>
-<footer>EARTHGRID © 2026 · Prototype</footer>
+<footer>EARTHGRID © 2026 · Interactive 3D Globe</footer>
 
-<script>
-(() => {
-const canvas=document.getElementById('globe');
-const ctx=canvas.getContext('2d');
-const W=()=>canvas.clientWidth;
-const H=()=>canvas.clientHeight;
-let yaw=-0.45,pitch=0.15,zoom=1,drag=false,moved=false;
-let px=0,py=0,startX=0,startY=0;
-let selectedLat=0,selectedLon=0;
-let points=[],stars=[];
-const TAU=Math.PI*2;
-const rad=d=>d*Math.PI/180;
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+<script type="module">
+import * as THREE from
+ 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 
-function resize(){
- const dpr=Math.min(window.devicePixelRatio||1,2);
- canvas.width=Math.round(W()*dpr);
- canvas.height=Math.round(H()*dpr);
- ctx.setTransform(dpr,0,0,dpr,0,0);
- makeStars();
- draw();
-}
-function makeStars(){
- stars=[];
- for(let i=0;i<100;i++){
-  stars.push({x:Math.random()*W(),y:Math.random()*H(),r:Math.random()*1.2+.2});
- }
-}
-function rotatePoint(lat,lon){
- let a=rad(lon),b=rad(lat);
- let x=Math.cos(b)*Math.sin(a);
- let y=Math.sin(b);
- let z=Math.cos(b)*Math.cos(a);
- let x1=x*Math.cos(yaw)-z*Math.sin(yaw);
- let z1=x*Math.sin(yaw)+z*Math.cos(yaw);
- let y2=y*Math.cos(pitch)-z1*Math.sin(pitch);
- let z2=y*Math.sin(pitch)+z1*Math.cos(pitch);
- return {x:x1,y:y2,z:z2};
-}
-function project(lat,lon,radius=1){
- const p=rotatePoint(lat,lon);
- const size=Math.min(W(),H())*.39*zoom;
- return {x:W()/2+p.x*size,y:H()/2-p.y*size,z:p.z,r:size};
-}
-function cellColor(lat,lon){
- // Illustrative alternating grid cells, not actual land ownership.
- const n=(Math.floor((lat+90)/10)+Math.floor((lon+180)/10))%2;
- return n?'rgba(42,118,117,.10)':'rgba(44,88,130,.09)';
-}
-function draw(){
- if(!ctx)return;
- const w=W(),h=H();
- ctx.clearRect(0,0,w,h);
- const bg=ctx.createRadialGradient(w/2,h/2,5,w/2,h/2,Math.max(w,h)*.7);
- bg.addColorStop(0,'#10233a');bg.addColorStop(1,'#07111f');
- ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
- stars.forEach(s=>{
-  ctx.fillStyle='rgba(180,210,240,.5)';
-  ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,TAU);ctx.fill();
- });
- const center=project(0,0),R=center.r;
- ctx.save();
- ctx.beginPath();ctx.arc(w/2,h/2,R,0,TAU);ctx.clip();
- const ocean=ctx.createRadialGradient(w/2-R*.3,h/2-R*.4,1,w/2,h/2,R);
- ocean.addColorStop(0,'#24749a');ocean.addColorStop(.65,'#105071');ocean.addColorStop(1,'#071e39');
- ctx.fillStyle=ocean;ctx.fillRect(w/2-R,h/2-R,2*R,2*R);
- // Approximate continent silhouettes for visual context.
- const continents=[
-  [[-168,70],[-140,70],[-120,55],[-105,50],[-80,10],[-98,5],[-112,25],[-130,50],[-160,55]],
-  [[-82,12],[-68,8],[-50,-5],[-42,-25],[-60,-55],[-75,-30]],
-  [[-18,35],[10,38],[35,20],[50,-10],[30,-35],[10,-35],[-5,0]],
-  [[-10,70],[35,70],[65,55],[100,50],[140,60],[170,45],[150,20],[115,5],[80,10],[55,30],[35,35],[20,50]],
-  [[110,-10],[155,-10],[150,-40],[115,-45]],
-  [[-52,80],[-20,75],[-35,60]]
- ];
- continents.forEach(poly=>{
-  const projected=poly.map(p=>project(p[1],p[0]));
-  ctx.beginPath();
-  projected.forEach((p,i)=>{if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y)});
-  ctx.closePath();ctx.fillStyle='#286b62';ctx.fill();
-  ctx.strokeStyle='rgba(127,221,181,.45)';ctx.lineWidth=1;ctx.stroke();
- });
- // Grid cells are drawn as curved latitude/longitude lines.
- ctx.lineWidth=.7;
- for(let lat=-80;lat<=80;lat+=10){
-  ctx.beginPath();let begun=false;
-  for(let lon=-180;lon<=180;lon+=2){
-   const p=project(lat,lon);
-   if(p.z<0){begun=false;continue}
-   if(!begun){ctx.moveTo(p.x,p.y);begun=true}else ctx.lineTo(p.x,p.y);
+const host=document.getElementById('globe');
+const loading=document.getElementById('loading');
+
+try {
+ const scene=new THREE.Scene();
+ const camera=new THREE.PerspectiveCamera(40,1,.1,100);
+ camera.position.z=3.2;
+
+ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+ renderer.setClearColor(0x000000,0);
+ host.appendChild(renderer.domElement);
+
+ scene.add(new THREE.AmbientLight(0xffffff,2.0));
+ const sun=new THREE.DirectionalLight(0xffffff,2.6);
+ sun.position.set(4,2,5);
+ scene.add(sun);
+
+ const globe=new THREE.Group();
+ scene.add(globe);
+
+ const earthGeo=new THREE.SphereGeometry(1,96,96);
+ const earthMat=new THREE.MeshPhongMaterial({color:0xffffff});
+ const earth=new THREE.Mesh(earthGeo,earthMat);
+ globe.add(earth);
+
+ const textureLoader=new THREE.TextureLoader();
+ textureLoader.setCrossOrigin('anonymous');
+ textureLoader.load(
+  'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+  texture=>{
+   earthMat.map=texture;
+   earthMat.needsUpdate=true;
+   loading.style.display='none';
+  },
+  undefined,
+  ()=>{
+   loading.textContent='Earth texture could not load. Check your connection.';
   }
-  ctx.strokeStyle='rgba(107,235,213,.48)';ctx.stroke();
+ );
+
+ // Draw latitude and longitude grid lines on the spherical surface.
+ const gridMat=new THREE.LineBasicMaterial({
+  color:0x65efd5,transparent:true,opacity:.55
+ });
+ function spherePoint(lat,lon,r=1.006){
+  const a=lat*Math.PI/180,b=lon*Math.PI/180;
+  return new THREE.Vector3(
+   r*Math.cos(a)*Math.cos(b),
+   r*Math.sin(a),
+   r*Math.cos(a)*Math.sin(b)
+  );
+ }
+ function addLine(coords){
+  const geo=new THREE.BufferGeometry().setFromPoints(coords);
+  globe.add(new THREE.Line(geo,gridMat));
+ }
+ for(let lat=-80;lat<=80;lat+=10){
+  const coords=[];
+  for(let lon=-180;lon<=180;lon+=2)
+   coords.push(spherePoint(lat,lon));
+  addLine(coords);
  }
  for(let lon=-180;lon<180;lon+=10){
-  ctx.beginPath();let begun=false;
-  for(let lat=-90;lat<=90;lat+=2){
-   const p=project(lat,lon);
-   if(p.z<0){begun=false;continue}
-   if(!begun){ctx.moveTo(p.x,p.y);begun=true}else ctx.lineTo(p.x,p.y);
-  }
-  ctx.strokeStyle='rgba(107,235,213,.48)';ctx.stroke();
+  const coords=[];
+  for(let lat=-90;lat<=90;lat+=2)
+   coords.push(spherePoint(lat,lon));
+  addLine(coords);
  }
- // Highlight the selected cell with a glowing marker.
- const m=project(selectedLat,selectedLon);
- if(m.z>0){
-  ctx.beginPath();ctx.arc(m.x,m.y,5,0,TAU);
-  ctx.fillStyle='#ffd166';ctx.shadowColor='#ffd166';ctx.shadowBlur=15;ctx.fill();ctx.shadowBlur=0;
+
+ // Subtle blue atmosphere around the Earth.
+ const atmosphere=new THREE.Mesh(
+  new THREE.SphereGeometry(1.025,64,64),
+  new THREE.MeshBasicMaterial({
+   color:0x3a9cff,transparent:true,opacity:.07,
+   side:THREE.BackSide
+  })
+ );
+ globe.add(atmosphere);
+
+ const marker=new THREE.Mesh(
+  new THREE.SphereGeometry(.014,16,16),
+  new THREE.MeshBasicMaterial({color:0xffd166})
+ );
+ globe.add(marker);
+
+ let selectedLat=0,selectedLon=0;
+ function updateInfo(lat,lon){
+  selectedLat=Math.max(-89.99,Math.min(89.99,lat));
+  selectedLon=((lon+180)%360+360)%360-180;
+  const a=Math.floor((selectedLat+90)/10);
+  const b=Math.floor((selectedLon+180)/10);
+  document.getElementById('parcelId').textContent=
+   'EG-'+String(a).padStart(2,'0')+'-'+String(b).padStart(2,'0');
+  document.getElementById('lat').textContent=selectedLat.toFixed(2)+'°';
+  document.getElementById('lon').textContent=selectedLon.toFixed(2)+'°';
+  document.getElementById('price').textContent=
+   '$'+(100+a*5+b*2).toFixed(2);
+  document.getElementById('status').textContent='Unverified';
+  document.getElementById('owner').textContent='No owner data';
+  marker.position.copy(spherePoint(selectedLat,selectedLon,1.035));
  }
- ctx.restore();
- ctx.beginPath();ctx.arc(w/2,h/2,R,0,TAU);
- ctx.strokeStyle='rgba(110,224,215,.65)';ctx.lineWidth=1.5;ctx.stroke();
-}
-function updateInfo(lat,lon){
- selectedLat=clamp(lat,-89.9,89.9);
- selectedLon=((lon+180)%360+360)%360-180;
- const a=Math.floor((selectedLat+90)/10);
- const b=Math.floor((selectedLon+180)/10);
- document.getElementById('parcelId').textContent=
- 'EG-'+String(a).padStart(2,'0')+'-'+String(b).padStart(2,'0');
- document.getElementById('lat').textContent=selectedLat.toFixed(2)+'°';
- document.getElementById('lon').textContent=selectedLon.toFixed(2)+'°';
- document.getElementById('price').textContent='$'+(100+a*5+b*2).toFixed(2);
- document.getElementById('status').textContent='Unverified';
- document.getElementById('owner').textContent='No owner data';
- draw();
-}
-function pointToGeo(clientX,clientY){
- const rect=canvas.getBoundingClientRect();
- const x=clientX-rect.left-W()/2;
- const y=H()/2-(clientY-rect.top);
- const R=Math.min(W(),H())*.39*zoom;
- const nx=x/R,ny=y/R,d=nx*nx+ny*ny;
- if(d>1)return null;
- const z=Math.sqrt(1-d);
- // Reverse the camera pitch and yaw to obtain globe coordinates.
- const y1=ny*Math.cos(pitch)+z*Math.sin(pitch);
- const z1=-ny*Math.sin(pitch)+z*Math.cos(pitch);
- const x2=nx*Math.cos(yaw)+z1*Math.sin(yaw);
- const z2=-nx*Math.sin(yaw)+z1*Math.cos(yaw);
- const lat=Math.asin(clamp(y1,-1,1))*180/Math.PI;
- const lon=Math.atan2(x2,z2)*180/Math.PI;
- return {lat,lon};
-}
-canvas.addEventListener('pointerdown',e=>{
- drag=true;moved=false;px=startX=e.clientX;py=startY=e.clientY;
- canvas.setPointerCapture(e.pointerId);
-});
-canvas.addEventListener('pointermove',e=>{
- if(!drag)return;
- const dx=e.clientX-px,dy=e.clientY-py;
- if(Math.abs(e.clientX-startX)+Math.abs(e.clientY-startY)>4)moved=true;
- yaw+=dx*.008;
- pitch=clamp(pitch+dy*.008,-1.4,1.4);
- px=e.clientX;py=e.clientY;draw();
-});
-canvas.addEventListener('pointerup',e=>{
- drag=false;
- if(!moved){
-  const p=pointToGeo(e.clientX,e.clientY);
-  if(p)updateInfo(p.lat,p.lon);
+ updateInfo(0,0);
+
+ const raycaster=new THREE.Raycaster();
+ const pointer=new THREE.Vector2();
+ let dragging=false,moved=false,px=0,py=0,sx=0,sy=0;
+ let zoom=3.2;
+
+ renderer.domElement.addEventListener('pointerdown',e=>{
+  dragging=true;moved=false;px=sx=e.clientX;py=sy=e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+ });
+ renderer.domElement.addEventListener('pointermove',e=>{
+  if(!dragging)return;
+  const dx=e.clientX-px,dy=e.clientY-py;
+  if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>4)moved=true;
+  globe.rotation.y+=dx*.006;
+  globe.rotation.x+=dy*.006;
+  globe.rotation.x=Math.max(-1.45,Math.min(1.45,globe.rotation.x));
+  px=e.clientX;py=e.clientY;
+ });
+ renderer.domElement.addEventListener('pointerup',e=>{
+  dragging=false;
+  if(moved)return;
+  const rect=renderer.domElement.getBoundingClientRect();
+  pointer.x=((e.clientX-rect.left)/rect.width)*2-1;
+  pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;
+  raycaster.setFromCamera(pointer,camera);
+  const hits=raycaster.intersectObject(earth);
+  if(!hits.length)return;
+  const local=globe.worldToLocal(hits[0].point.clone()).normalize();
+  const lat=Math.asin(local.y)*180/Math.PI;
+  const lon=Math.atan2(local.z,local.x)*180/Math.PI;
+  updateInfo(lat,lon);
+ });
+ renderer.domElement.addEventListener('pointercancel',()=>dragging=false);
+ renderer.domElement.addEventListener('wheel',e=>{
+  e.preventDefault();
+  zoom=Math.max(1.45,Math.min(5,zoom+e.deltaY*.002));
+  camera.position.z=zoom;
+ },{passive:false});
+
+ document.getElementById('random').onclick=()=>{
+  updateInfo(Math.random()*160-80,Math.random()*360-180);
+ };
+ document.getElementById('reset').onclick=()=>{
+  globe.rotation.set(0,0,0);
+  zoom=3.2;camera.position.z=zoom;
+  updateInfo(0,0);
+ };
+
+ function resize(){
+  const w=host.clientWidth,h=host.clientHeight;
+  if(!w||!h)return;
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
  }
-});
-canvas.addEventListener('pointercancel',()=>drag=false);
-canvas.addEventListener('wheel',e=>{
- e.preventDefault();
- zoom=clamp(zoom-e.deltaY*.001,0.7,2.5);draw();
-},{passive:false});
-document.getElementById('random').addEventListener('click',()=>{
- updateInfo(Math.random()*160-80,Math.random()*360-180);
-});
-document.getElementById('reset').addEventListener('click',()=>{
- yaw=-.45;pitch=.15;zoom=1;updateInfo(0,0);
-});
-window.addEventListener('resize',resize);
-resize();
-updateInfo(0,0);
-})();
+ window.addEventListener('resize',resize);
+ resize();
+
+ function animate(){
+  requestAnimationFrame(animate);
+  renderer.render(scene,camera);
+ }
+ animate();
+} catch(error) {
+ loading.textContent='The 3D globe failed to start. Reload the page and try again.';
+ console.error(error);
+}
 </script>
 </body>
 </html>
