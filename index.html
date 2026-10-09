@@ -1,692 +1,279 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EarthGrid | Digital Land Parcels</title>
-
 <style>
-:root {
-  --bg: #07111b;
-  --panel: #0d1b28;
-  --orange: #ff8a24;
-  --gold: #e6b66a;
-  --text: #f5f7fa;
-  --muted: #aab7c4;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Arial, sans-serif;
-}
-
-#app {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  height: 100vh;
-  min-height: 600px;
-}
-
-#globeWrap {
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-  background: radial-gradient(ellipse at center, #102637, #07111b 75%);
-}
-
-#globeViz {
-  position: absolute;
-  inset: 0;
-}
-
-#brand {
-  position: absolute;
-  z-index: 2;
-  left: 22px;
-  top: 20px;
-  pointer-events: none;
-}
-
-#brand h1 {
-  margin: 0;
-  font-size: clamp(24px, 3vw, 38px);
-  letter-spacing: 4px;
-}
-
-#brand p {
-  color: var(--gold);
-  font-size: 11px;
-  letter-spacing: 2px;
-}
-
-#status {
-  position: absolute;
-  z-index: 3;
-  left: 15px;
-  bottom: 15px;
-  max-width: calc(100% - 30px);
-  padding: 10px 12px;
-  border: 1px solid #314557;
-  border-radius: 8px;
-  background: #08131ddd;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-#panel {
-  overflow-y: auto;
-  background: linear-gradient(180deg, #102131, #09131d);
-  border-left: 1px solid #263a4a;
-  padding: 20px 16px;
-}
-
-.eyebrow {
-  color: var(--gold);
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-h2 {
-  margin: 8px 0 16px;
-  font-size: 20px;
-}
-
-.card {
-  background: #102131;
-  border: 1px solid #263d4e;
-  border-radius: 12px;
-  padding: 14px;
-  margin: 12px 0;
-}
-
-label {
-  display: block;
-  margin-bottom: 7px;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-input, button {
-  width: 100%;
-  padding: 11px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-input {
-  color: white;
-  background: #07131e;
-  border: 1px solid #354b5d;
-}
-
-button {
-  margin-top: 8px;
-  border: 0;
-  background: var(--orange);
-  color: #17110a;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button.secondary {
-  color: white;
-  background: #203648;
-  border: 1px solid #3a5265;
-}
-
-.small {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
-}
-
-.price {
-  margin: 8px 0;
-  color: var(--gold);
-  font-size: 30px;
-  font-weight: bold;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.metric {
-  padding: 10px;
-  background: #091722;
-  border-radius: 8px;
-}
-
-.metric span {
-  display: block;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.metric strong {
-  display: block;
-  margin-top: 5px;
-  font-size: 17px;
-}
-
-.pill {
-  display: inline-block;
-  margin: 3px 2px;
-  padding: 5px 8px;
-  border: 1px solid #395164;
-  border-radius: 20px;
-  color: #d6e1e9;
-  font-size: 11px;
-}
-
-.legend {
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.swatch {
-  display: inline-block;
-  width: 18px;
-  height: 3px;
-  margin-right: 6px;
-  background: var(--orange);
-  vertical-align: middle;
-}
-
-.error { color: #ffb4a8; }
-
-@media (max-width: 760px) {
-  #app {
-    grid-template-columns: 1fr;
-    grid-template-rows: 55vh auto;
-    height: auto;
-    min-height: 100vh;
-  }
-
-  #globeWrap { min-height: 360px; }
-
-  #panel {
-    border-left: 0;
-    border-top: 1px solid #263a4a;
-  }
+:root{--bg:#07111b;--panel:#0d1b28;--orange:#ff8a24;--gold:#e6b66a;--text:#f5f7fa;--muted:#aab7c4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+#app{display:grid;grid-template-columns:minmax(0,1fr) 320px;height:100vh;min-height:600px;direction:ltr}
+#globeWrap{position:relative;min-width:0;overflow:hidden;background:radial-gradient(ellipse at center,#102637,#07111b 75%)}
+#globeViz{position:absolute;inset:0}
+#brand{position:absolute;z-index:2;left:22px;top:18px;pointer-events:none;direction:ltr}
+#brand h1{margin:0;font-size:clamp(24px,3vw,38px);letter-spacing:4px}
+#brand p{color:var(--gold);font-size:11px;letter-spacing:2px}
+#status{position:absolute;z-index:3;left:15px;bottom:15px;max-width:calc(100% - 30px);padding:10px 12px;border:1px solid #314557;border-radius:8px;background:#08131ddd;color:var(--muted);font-size:12px;line-height:1.7;direction:rtl}
+#panel{overflow-y:auto;background:linear-gradient(180deg,#102131,#09131d);border-left:1px solid #263a4a;padding:20px 16px;direction:rtl;text-align:right}
+.eyebrow{color:var(--gold);font-size:10px;letter-spacing:2px;text-transform:uppercase}
+h2{margin:8px 0 16px;font-size:20px}
+.card{background:#102131;border:1px solid #263d4e;border-radius:12px;padding:14px;margin:12px 0}
+label{display:block;margin-bottom:7px;color:var(--muted);font-size:12px}
+input,button{width:100%;padding:11px;border-radius:8px;font-size:14px}
+input{color:white;background:#07131e;border:1px solid #354b5d}
+button{margin-top:8px;border:0;background:var(--orange);color:#17110a;font-weight:bold;cursor:pointer}
+button.secondary{color:white;background:#203648;border:1px solid #3a5265}
+.small{color:var(--muted);font-size:12px;line-height:1.7}
+.price{margin:8px 0;color:var(--gold);font-size:30px;font-weight:bold}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.metric{padding:10px;background:#091722;border-radius:8px}
+.metric span{display:block;color:var(--muted);font-size:11px}
+.metric strong{display:block;margin-top:5px;font-size:17px}
+.pill{display:inline-block;margin:3px 2px;padding:5px 8px;border:1px solid #395164;border-radius:20px;color:#d6e1e9;font-size:11px}
+.legend{margin-top:12px;color:var(--muted);font-size:11px}
+.swatch{display:inline-block;width:18px;height:3px;margin-left:6px;background:var(--orange);vertical-align:middle}
+.error{color:#ffb4a8}
+@media(max-width:760px){
+#app{grid-template-columns:1fr;grid-template-rows:55vh auto;height:auto;min-height:100vh}
+#globeWrap{min-height:360px}
+#panel{border-left:0;border-top:1px solid #263a4a}
 }
 </style>
 </head>
-
 <body>
 <div id="app">
+<main id="globeWrap">
+<div id="brand"><h1>EARTHGRID</h1><p>EXPLORE · SELECT · COLLECT</p></div>
+<div id="globeViz"></div>
+<div id="status">در حال بارگذاری کره سه‌بعدی و مرزبندی قطعات خشکی...</div>
+</main>
 
-  <main id="globeWrap">
-    <div id="brand">
-      <h1>EARTHGRID</h1>
-      <p>EXPLORE · SELECT · COLLECT</p>
-    </div>
+<aside id="panel">
+<div class="eyebrow">Digital Land Concept</div>
+<h2>Explore EarthGrid</h2>
 
-    <div id="globeViz"></div>
+<div class="card">
+<label for="searchId">جست‌وجو با شناسه قطعه</label>
+<input id="searchId" placeholder="مثال: EG-000123" autocomplete="off">
+<button id="searchBtn">جست‌وجوی قطعه</button>
+<button id="resetBtn" class="secondary">بازگشت به نمای اولیه</button>
+<div id="searchMessage" class="small"></div>
+</div>
 
-    <div id="status">
-      در حال بارگذاری کره سه‌بعدی و نقشه خشکی‌های زمین...
-    </div>
-  </main>
+<div class="card">
+<div class="eyebrow">Selected Parcel</div>
+<h3 id="selectedId">هنوز قطعه‌ای انتخاب نشده</h3>
+<div class="price" id="selectedPrice">—</div>
+<div class="small" id="selectedRegion">برای انتخاب قطعه، روی یکی از قطعات نارنجی کره بزن.</div>
+<div class="row" style="margin-top:12px">
+<div class="metric"><span>عرض جغرافیایی</span><strong id="latValue">—</strong></div>
+<div class="metric"><span>طول جغرافیایی</span><strong id="lonValue">—</strong></div>
+</div>
+<div class="legend"><span class="swatch"></span>مرز نارنجی قطعات دیجیتال روی خشکی‌ها</div>
+</div>
 
-  <aside id="panel">
-    <div class="eyebrow">Digital Land Concept</div>
-    <h2>Explore EarthGrid</h2>
+<div class="card">
+<div class="eyebrow">Regional Prices</div>
+<div style="margin-top:10px">
+<span class="pill">آسیا: $1</span>
+<span class="pill">اروپا: $5</span>
+<span class="pill">آمریکای شمالی: $10</span>
+<span class="pill">آفریقا: $2</span>
+<span class="pill">آمریکای جنوبی: $3</span>
+<span class="pill">اقیانوسیه: $4</span>
+</div>
+<p class="small">قیمت‌ها نمایشی هستند. این قطعات دیجیتال‌اند و مالکیت قانونی زمین واقعی ایجاد نمی‌کنند.</p>
+</div>
 
-    <div class="card">
-      <label for="searchId">جست‌وجو با شناسه قطعه</label>
-
-      <input
-        id="searchId"
-        placeholder="مثال: EG-000123"
-        autocomplete="off"
-      >
-
-      <button id="searchBtn">جست‌وجوی قطعه</button>
-      <button id="resetBtn" class="secondary">بازگشت به نمای اولیه</button>
-
-      <div id="searchMessage" class="small"></div>
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">Selected Parcel</div>
-
-      <h3 id="selectedId">هنوز قطعه‌ای انتخاب نشده</h3>
-
-      <div class="price" id="selectedPrice">—</div>
-
-      <div class="small" id="selectedRegion">
-        برای انتخاب قطعه، روی یکی از قطعات کره بزن.
-      </div>
-
-      <div class="row" style="margin-top:12px">
-        <div class="metric">
-          <span>عرض جغرافیایی</span>
-          <strong id="latValue">—</strong>
-        </div>
-
-        <div class="metric">
-          <span>طول جغرافیایی</span>
-          <strong id="lonValue">—</strong>
-        </div>
-      </div>
-
-      <div class="legend">
-        <span class="swatch"></span>
-        مرز تقریبی قطعات
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">Regional Prices</div>
-
-      <div style="margin-top:10px">
-        <span class="pill">آسیا: $1</span>
-        <span class="pill">اروپا: $5</span>
-        <span class="pill">آمریکای شمالی: $10</span>
-        <span class="pill">آفریقا: $2</span>
-        <span class="pill">آمریکای جنوبی: $3</span>
-        <span class="pill">اقیانوسیه: $4</span>
-        <span class="pill">قطبی: $1</span>
-      </div>
-
-      <p class="small">
-        این قیمت‌ها صرفاً نمایشی و مربوط به قطعات دیجیتال این نمونه هستند.
-        آن‌ها مالکیت قانونی زمین واقعی را ایجاد نمی‌کنند.
-      </p>
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">Prototype Statistics</div>
-
-      <div class="row" style="margin-top:10px">
-        <div class="metric">
-          <span>قطعات بارگذاری‌شده</span>
-          <strong id="parcelCount">0</strong>
-        </div>
-
-        <div class="metric">
-          <span>هدف نهایی</span>
-          <strong>500,000</strong>
-        </div>
-      </div>
-
-      <p class="small">
-        این نسخه یک نمونه اولیه است. تعداد قطعات بارگذاری‌شده
-        لزوماً ۵۰۰ هزار نیست. ثبت‌نام، مالکیت دائمی، تصاویر کاربران،
-        پایگاه داده و پرداخت واقعی هنوز فعال نیستند.
-      </p>
-    </div>
-  </aside>
+<div class="card">
+<div class="eyebrow">Prototype Statistics</div>
+<div class="row" style="margin-top:10px">
+<div class="metric"><span>قطعات بارگذاری‌شده</span><strong id="parcelCount">0</strong></div>
+<div class="metric"><span>هدف نهایی</span><strong>500,000</strong></div>
+</div>
+<p class="small">این نسخه نمونه اولیه است. حساب کاربری، پایگاه داده، مالکیت دائمی و پرداخت واقعی هنوز فعال نیستند.</p>
+</div>
+</aside>
 </div>
 
 <script src="https://unpkg.com/globe.gl"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
-
 <script>
-(() => {
-  const statusEl = document.getElementById("status");
-  const countEl = document.getElementById("parcelCount");
-
-  const selectedIdEl = document.getElementById("selectedId");
-  const selectedPriceEl = document.getElementById("selectedPrice");
-  const selectedRegionEl = document.getElementById("selectedRegion");
-
-  const latEl = document.getElementById("latValue");
-  const lonEl = document.getElementById("lonValue");
-
-  const searchMessage = document.getElementById("searchMessage");
-
-  let globe = null;
-  let parcels = [];
-  let selectedParcel = null;
-
-  function getRegion(lat, lon) {
-    if (lat > 66 || lat < -60) {
-      return { name: "Polar regions", price: 1 };
-    }
-
-    if (lon >= -168 && lon < -30 && lat > 7) {
-      return { name: "North America", price: 10 };
-    }
-
-    if (lon >= -82 && lon < -34 && lat <= 7 && lat > -57) {
-      return { name: "South America", price: 3 };
-    }
-
-    if (lon >= -20 && lon < 52 && lat > -36 && lat < 38) {
-      return { name: "Africa", price: 2 };
-    }
-
-    if (lon >= -12 && lon < 45 && lat >= 35) {
-      return { name: "Europe", price: 5 };
-    }
-
-    if (lon >= 45 && lon < 180 && lat > -10) {
-      return { name: "Asia", price: 1 };
-    }
-
-    if ((lon >= 110 || lon < -150) && lat <= 0 && lat > -50) {
-      return { name: "Oceania", price: 4 };
-    }
-
-    if (lon >= -180 && lon < -30 && lat <= 7 && lat > -60) {
-      return { name: "South America", price: 3 };
-    }
-
-    return { name: "Asia", price: 1 };
-  }
-
-  function makeParcel(west, south, east, north, id, lat, lon) {
-    const region = getRegion(lat, lon);
-
-    return {
-      type: "Feature",
-      properties: {
-        id: id,
-        centerLat: lat,
-        centerLon: lon,
-        region: region.name,
-        price: region.price
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [west, south],
-          [east, south],
-          [east, north],
-          [west, north],
-          [west, south]
-        ]]
-      }
-    };
-  }
-
-  function selectParcel(parcel) {
-    if (!parcel) return;
-
-    selectedParcel = parcel;
-
-    const p = parcel.properties;
-
-    selectedIdEl.textContent = p.id;
-    selectedPriceEl.textContent = "$" + p.price;
-    selectedRegionEl.textContent =
-      p.region + " · Digital parcel prototype";
-
-    latEl.textContent = p.centerLat.toFixed(2) + "°";
-    lonEl.textContent = p.centerLon.toFixed(2) + "°";
-
-    document.getElementById("searchId").value = p.id;
-
-    if (globe) {
-      globe.pointOfView({
-        lat: p.centerLat,
-        lng: p.centerLon,
-        altitude: 1.5
-      }, 900);
-
-      globe.polygonCapColor(d =>
-        d.properties.id === p.id
-          ? "rgba(255,138,36,0.45)"
-          : "rgba(255,138,36,0.035)"
-      );
-    }
-  }
-
-  async function initializeGlobe() {
-    try {
-      if (
-        typeof Globe !== "function" ||
-        !window.d3 ||
-        !window.topojson
-      ) {
-        throw new Error(
-          "کتابخانه‌های موردنیاز بارگذاری نشدند. اتصال اینترنت را بررسی و صفحه را تازه‌سازی کن."
-        );
-      }
-
-      globe = Globe()(
-        document.getElementById("globeViz")
-      )
-        .backgroundColor("rgba(0,0,0,0)")
-        .showAtmosphere(true)
-        .atmosphereColor("#4d8fbc")
-        .atmosphereAltitude(0.18)
-        .showGraticules(false)
-        .globeImageUrl(
-          "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-        )
-        .bumpImageUrl(
-          "https://unpkg.com/three-globe/example/img/earth-topology.png"
-        )
-        .polygonsData([])
-        .polygonGeoJsonGeometry(d => d.geometry)
-        .polygonCapColor(() => "rgba(255,138,36,0.035)")
-        .polygonSideColor(() => "rgba(255,138,36,0.04)")
-        .polygonStrokeColor(() => "#ff8a24")
-        .polygonAltitude(0.004)
-        .polygonLabel(d =>
-          `<div style="
-            background:#091722;
-            border:1px solid #ff8a24;
-            padding:8px 10px;
-            border-radius:7px;
-            color:white;
-            font:12px Arial
-          ">
-            <b>${d.properties.id}</b><br>
-            ${d.properties.region} · $${d.properties.price}
-          </div>`
-        )
-        .onPolygonClick(d => selectParcel(d));
-
-      function resizeGlobe() {
-        const el = document.getElementById("globeViz");
-
-        globe
-          .width(el.clientWidth)
-          .height(el.clientHeight);
-      }
-
-      resizeGlobe();
-      window.addEventListener("resize", resizeGlobe);
-
-      globe.pointOfView({
-        lat: 20,
-        lng: 5,
-        altitude: 2.15
-      }, 0);
-
-      statusEl.textContent = "در حال دریافت مرز خشکی‌های زمین...";
-
-      const response = await fetch(
-        "https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json"
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          "دریافت اطلاعات خشکی‌ها ناموفق بود: " + response.status
-        );
-      }
-
-      const world = await response.json();
-
-      const land = topojson.feature(
-        world,
-        world.objects.land
-      );
-
-      /*
-        هر قطعه یک سلول شبکه‌ای است.
-        تنها سلول‌هایی پذیرفته می‌شوند که مرکز و چهار گوشه‌شان
-        داخل خشکی باشند. این روش تقریبی است و مرز ساحل را
-        به دقت نقشه‌برداری نمایش نمی‌دهد.
-      */
-
-      const step = 1.4;
-      const maxParcels = 18000;
-      const generated = [];
-
-      let idNumber = 1;
-
-      for (let lat = -55; lat < 78; lat += step) {
-        for (let lon = -180; lon < 180; lon += step) {
-          const west = lon;
-          const east = Math.min(180, lon + step);
-
-          const south = lat;
-          const north = Math.min(85, lat + step);
-
-          const centerLat = (south + north) / 2;
-          const centerLon = (west + east) / 2;
-
-          const points = [
-            [centerLon, centerLat],
-            [west, south],
-            [east, south],
-            [east, north],
-            [west, north]
-          ];
-
-          const completelyOnLand = points.every(point =>
-            d3.geoContains(land, point)
-          );
-
-          if (!completelyOnLand) continue;
-
-          const id =
-            "EG-" + String(idNumber).padStart(6, "0");
-
-          generated.push(
-            makeParcel(
-              west,
-              south,
-              east,
-              north,
-              id,
-              centerLat,
-              centerLon
-            )
-          );
-
-          idNumber++;
-
-          if (generated.length >= maxParcels) break;
-        }
-
-        if (generated.length >= maxParcels) break;
-      }
-
-      parcels = generated;
-
-      globe.polygonsData(parcels);
-
-      countEl.textContent =
-        parcels.length.toLocaleString();
-
-      statusEl.textContent =
-        "کره آماده است. " +
-        parcels.length.toLocaleString() +
-        " قطعه تقریبی بارگذاری شد. برای چرخاندن بکش و برای بزرگ‌نمایی از اسکرول یا لمس استفاده کن.";
-
-      globe.controls().autoRotate = false;
-      globe.controls().enableDamping = true;
-      globe.controls().dampingFactor = 0.08;
-
-    } catch (error) {
-      console.error(error);
-
-      statusEl.innerHTML =
-        '<span class="error">خطا در بارگذاری: ' +
-        String(error.message || error) +
-        "</span>";
-    }
-  }
-
-  document.getElementById("searchBtn").addEventListener(
-    "click",
-    () => {
-      const id = document
-        .getElementById("searchId")
-        .value.trim()
-        .toUpperCase();
-
-      if (!id) {
-        searchMessage.textContent =
-          "ابتدا شناسه قطعه را وارد کن.";
-        return;
-      }
-
-      const match = parcels.find(
-        p => p.properties.id.toUpperCase() === id
-      );
-
-      if (match) {
-        selectParcel(match);
-
-        searchMessage.textContent =
-          "قطعه پیدا شد و انتخاب شد.";
-      } else {
-        searchMessage.textContent =
-          "این شناسه در شبکه فعلی قطعات پیدا نشد.";
-      }
-    }
-  );
-
-  document.getElementById("searchId").addEventListener(
-    "keydown",
-    event => {
-      if (event.key === "Enter") {
-        document.getElementById("searchBtn").click();
-      }
-    }
-  );
-
-  document.getElementById("resetBtn").addEventListener(
-    "click",
-    () => {
-      if (globe) {
-        globe.pointOfView({
-          lat: 20,
-          lng: 5,
-          altitude: 2.15
-        }, 900);
-
-        globe.polygonCapColor(
-          () => "rgba(255,138,36,0.035)"
-        );
-      }
-
-      selectedParcel = null;
-
-      selectedIdEl.textContent =
-        "هنوز قطعه‌ای انتخاب نشده";
-
-      selectedPriceEl.textContent = "—";
-
-      selectedRegionEl.textContent =
-        "برای انتخاب قطعه، روی یکی از قطعات کره بزن.";
-
-      latEl.textContent = "—";
-      lonEl.textContent = "—";
-
-      document.getElementById("searchId").value = "";
-      searchMessage.textContent = "";
-    }
-  );
-
-  initializeGlobe();
+(()=>{
+const statusEl=document.getElementById('status');
+const countEl=document.getElementById('parcelCount');
+const selectedIdEl=document.getElementById('selectedId');
+const selectedPriceEl=document.getElementById('selectedPrice');
+const selectedRegionEl=document.getElementById('selectedRegion');
+const latEl=document.getElementById('latValue');
+const lonEl=document.getElementById('lonValue');
+const searchMessage=document.getElementById('searchMessage');
+
+let globe=null,parcels=[],selectedParcel=null;
+
+function getRegion(lat,lon){
+if(lat>66||lat< -60)return{name:'Polar regions',price:1};
+if(lon>=-168&&lon< -30&&lat>7)return{name:'North America',price:10};
+if(lon>=-82&&lon< -34&&lat<=7&&lat> -57)return{name:'South America',price:3};
+if(lon>=-20&&lon<52&&lat> -36&&lat<38)return{name:'Africa',price:2};
+if(lon>=-12&&lon<45&&lat>=35)return{name:'Europe',price:5};
+if(lon>=45&&lon<180&&lat> -10)return{name:'Asia',price:1};
+if((lon>=110||lon< -150)&&lat<=0&&lat> -50)return{name:'Oceania',price:4};
+return{name:'Asia',price:1};
+}
+
+function makeParcel(west,south,east,north,id,lat,lon){
+const r=getRegion(lat,lon);
+return{
+type:'Feature',
+properties:{id,centerLat:lat,centerLon:lon,region:r.name,price:r.price},
+geometry:{
+type:'Polygon',
+coordinates:[[[west,south],[east,south],[east,north],[west,north],[west,south]]]
+}
+};
+}
+
+function selectParcel(parcel){
+if(!parcel)return;
+selectedParcel=parcel;
+const p=parcel.properties;
+selectedIdEl.textContent=p.id;
+selectedPriceEl.textContent='$'+p.price;
+selectedRegionEl.textContent=p.region+' · Digital parcel prototype';
+latEl.textContent=p.centerLat.toFixed(2)+'°';
+lonEl.textContent=p.centerLon.toFixed(2)+'°';
+document.getElementById('searchId').value=p.id;
+
+if(globe){
+globe.pointOfView({lat:p.centerLat,lng:p.centerLon,altitude:1.5},900);
+globe.polygonCapColor(d=>d.properties.id===p.id?'rgba(255,138,36,0.48)':'rgba(255,138,36,0.10)');
+globe.polygonStrokeColor(d=>d.properties.id===p.id?'#fff0c2':'#ff8a24');
+}
+}
+
+async function initializeGlobe(){
+try{
+if(typeof Globe!=='function'||!window.d3||!window.topojson){
+throw new Error('کتابخانه‌های لازم بارگذاری نشدند؛ اینترنت را بررسی و صفحه را تازه‌سازی کن.');
+}
+
+globe=Globe()(document.getElementById('globeViz'))
+.backgroundColor('rgba(0,0,0,0)')
+.showAtmosphere(true)
+.atmosphereColor('#4d8fbc')
+.atmosphereAltitude(0.18)
+.showGraticules(false)
+.globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+.bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+.polygonsData([])
+.polygonGeoJsonGeometry(d=>d.geometry)
+.polygonCapColor(()=> 'rgba(255,138,36,0.10)')
+.polygonSideColor(()=> 'rgba(255,138,36,0.08)')
+.polygonStrokeColor(()=> '#ff8a24')
+.polygonAltitude(0.006)
+.polygonLabel(d=>`<div style="background:#091722;border:1px solid #ff8a24;padding:8px 10px;border-radius:7px;color:white;font:12px Arial"><b>${d.properties.id}</b><br>${d.properties.region} · $${d.properties.price}</div>`)
+.onPolygonClick(d=>selectParcel(d));
+
+function resizeGlobe(){
+const el=document.getElementById('globeViz');
+globe.width(el.clientWidth).height(el.clientHeight);
+}
+resizeGlobe();
+window.addEventListener('resize',resizeGlobe);
+globe.pointOfView({lat:20,lng:5,altitude:2.15},0);
+
+statusEl.textContent='در حال دریافت نقشه خشکی‌ها...';
+
+const response=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json');
+if(!response.ok)throw new Error('دریافت نقشه خشکی‌ها ناموفق بود: '+response.status);
+
+const world=await response.json();
+const land=topojson.feature(world,world.objects.land);
+
+// شبکه دو درجه‌ای؛ فقط سلول‌هایی که مرکز و گوشه‌هایشان روی خشکی باشند نگه داشته می‌شوند.
+// این مرزبندی نمونه‌ای است و نقشه ثبتی یا مرز حقوقی زمین نیست.
+const step=2;
+const generated=[];
+let idNumber=1;
+
+for(let lat=-58;lat<80;lat+=step){
+for(let lon=-180;lon<180;lon+=step){
+const west=lon;
+const east=Math.min(180,lon+step);
+const south=lat;
+const north=Math.min(82,lat+step);
+const centerLat=(south+north)/2;
+const centerLon=(west+east)/2;
+
+const pts=[
+[centerLon,centerLat],
+[west+0.02,south+0.02],
+[east-0.02,south+0.02],
+[east-0.02,north-0.02],
+[west+0.02,north-0.02]
+];
+
+if(!pts.every(pt=>d3.geoContains(land,pt)))continue;
+
+const id='EG-'+String(idNumber).padStart(6,'0');
+generated.push(makeParcel(west,south,east,north,id,centerLat,centerLon));
+idNumber++;
+}
+}
+
+parcels=generated;
+globe.polygonsData(parcels);
+countEl.textContent=parcels.length.toLocaleString();
+statusEl.textContent='کره آماده است؛ '+parcels.length.toLocaleString()+' قطعه تقریبی با مرز نارنجی بارگذاری شد. روی قطعه بزن تا انتخاب شود.';
+globe.controls().autoRotate=false;
+globe.controls().enableDamping=true;
+globe.controls().dampingFactor=0.08;
+
+}catch(error){
+console.error(error);
+statusEl.innerHTML='<span class="error">خطا در بارگذاری: '+String(error.message||error)+'</span>';
+}
+}
+
+document.getElementById('searchBtn').addEventListener('click',()=>{
+const id=document.getElementById('searchId').value.trim().toUpperCase();
+if(!id){
+searchMessage.textContent='ابتدا شناسه قطعه را وارد کن.';
+return;
+}
+const match=parcels.find(p=>p.properties.id.toUpperCase()===id);
+if(match){
+selectParcel(match);
+searchMessage.textContent='قطعه پیدا شد و انتخاب شد.';
+}else{
+searchMessage.textContent='این شناسه در شبکه فعلی پیدا نشد.';
+}
+});
+
+document.getElementById('searchId').addEventListener('keydown',e=>{
+if(e.key==='Enter')document.getElementById('searchBtn').click();
+});
+
+document.getElementById('resetBtn').addEventListener('click',()=>{
+if(globe){
+globe.pointOfView({lat:20,lng:5,altitude:2.15},900);
+globe.polygonCapColor(()=> 'rgba(255,138,36,0.10)');
+globe.polygonStrokeColor(()=> '#ff8a24');
+}
+selectedParcel=null;
+selectedIdEl.textContent='هنوز قطعه‌ای انتخاب نشده';
+selectedPriceEl.textContent='—';
+selectedRegionEl.textContent='برای انتخاب قطعه، روی یکی از قطعات نارنجی کره بزن.';
+latEl.textContent='—';
+lonEl.textContent='—';
+document.getElementById('searchId').value='';
+searchMessage.textContent='';
+});
+
+initializeGlobe();
 })();
 </script>
 </body>
