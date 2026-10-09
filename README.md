@@ -1,2 +1,277 @@
 # EarthGrid
 Interactive 3D Earth parcel marketplace
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EarthGrid | Digital World</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#050607;color:#fff;font-family:Arial,sans-serif;overflow:hidden}
+#globe{position:absolute;inset:0}
+header{position:absolute;top:18px;left:20px;z-index:5}
+h1{font-size:25px;letter-spacing:5px;margin:0;color:#ff8a24}
+header p{font-size:10px;color:#aaa;letter-spacing:2px}
+.panel{
+ position:absolute;top:100px;left:18px;z-index:5;width:290px;
+ padding:18px;background:rgba(10,13,16,.94);
+ border:1px solid #38312a;border-radius:14px;
+}
+h2{font-size:21px;margin:8px 0}
+p{color:#aeb5bd;font-size:13px;line-height:1.6}
+input,button{
+ width:100%;padding:12px;margin-top:8px;border-radius:8px;
+ border:1px solid #454545;background:#111519;color:white
+}
+button{cursor:pointer;font-weight:bold}
+button.primary{background:#ff8a24;color:#17100a;border:0}
+.price{font-size:30px;font-weight:bold;color:#ff8a24;margin:10px 0}
+.label{font-size:10px;color:#ff8a24;letter-spacing:2px}
+.small{font-size:10px;color:#7e8790;line-height:1.5}
+.controls{position:absolute;right:16px;bottom:18px;z-index:5;display:flex;gap:7px}
+.controls button{width:44px;height:44px;font-size:20px;background:#101418}
+#hint{position:absolute;bottom:20px;left:18px;color:#aaa;font-size:11px;z-index:4}
+@media(max-width:600px){
+ header{top:10px;left:12px}
+ h1{font-size:20px}
+ .panel{top:78px;left:10px;width:250px;padding:13px;max-height:70vh;overflow:auto}
+ h2{font-size:18px}
+ #hint{bottom:12px;left:10px;max-width:58%;font-size:10px}
+ .controls{right:10px;bottom:10px}
+ .controls button{width:38px;height:38px}
+}
+</style>
+</head>
+
+<body>
+<div id="globe"></div>
+
+<header>
+  <h1>EARTHGRID</h1>
+  <p>A WORLD OF DIGITAL PARCELS</p>
+</header>
+
+<section class="panel">
+  <div class="label">EXPLORE THE WORLD</div>
+  <h2>Find your piece of Earth.</h2>
+  <p>Rotate the globe, explore land parcels and select a parcel to preview its proposed price.</p>
+
+  <p>Visible parcels: <strong id="count">Loading...</strong></p>
+
+  <input id="search" placeholder="Parcel ID: EG-000001">
+  <button class="primary" id="find">Find parcel</button>
+  <button id="reset">Reset globe</button>
+
+  <hr style="border-color:#292d31;margin-top:16px">
+
+  <div class="label">SELECTED PARCEL</div>
+  <h3 id="title">Select an orange parcel</h3>
+  <div id="parcelId" style="color:#ff8a24">No parcel selected</div>
+  <div class="price" id="price">—</div>
+  <div id="owner">Owner: Unclaimed demo parcel</div>
+
+  <p class="small">
+    DEMO ONLY. Parcels and prices are illustrative. No real land ownership,
+    account registration, or payment is available in this prototype.
+  </p>
+</section>
+
+<div id="hint">Drag to rotate · Scroll or pinch to zoom · Tap a parcel</div>
+
+<div class="controls">
+  <button id="zoomIn">+</button>
+  <button id="zoomOut">−</button>
+  <button id="rotate">⟳</button>
+</div>
+
+<script src="https://unpkg.com/three"></script>
+<script src="https://unpkg.com/globe.gl"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
+<script>
+(async function(){
+ const ORANGE="#ff8a24";
+ const parcelMap=new Map();
+ let globe;
+ let selected=null;
+ let rotating=true;
+
+ const setText=(id,value)=>{
+   document.getElementById(id).textContent=value;
+ };
+
+ function priceFor(lat,lon){
+   if(Math.abs(lat)>=66)return 1;
+   if(lon>=-25&&lon<=60&&lat>=34&&lat<=72)return 5;
+   if(lon>=-170&&lon<=-30)return 10;
+   if(lon>=60&&lon<=180&&lat>=-10&&lat<=78)return 1;
+   if(lat<=0&&lon>=-20&&lon<=55)return 2;
+   if(lon>=-82&&lon<=-30&&lat<=15)return 3;
+   if(lon>=110&&lat<=0)return 4;
+   return 2;
+ }
+
+ function selectParcel(p){
+   selected=p;
+   setText("title","Digital land parcel");
+   setText("parcelId",p.id);
+   setText("price","$"+p.price.toFixed(2));
+   setText("owner",p.owner?"Owner: "+p.owner:"Owner: Unclaimed demo parcel");
+   document.getElementById("search").value=p.id;
+ }
+
+ function makePolygon(lat,lon,size,id){
+   const h=size/2;
+   return {
+     id:id,
+     lat:lat,
+     lon:lon,
+     price:priceFor(lat,lon),
+     owner:null,
+     polygon:[
+       [lat-h,lon-h],
+       [lat-h,lon+h],
+       [lat+h,lon+h],
+       [lat+h,lon-h]
+     ]
+   };
+ }
+
+ try{
+   const response=await fetch(
+     "https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json"
+   );
+   if(!response.ok)throw new Error("Could not load world map.");
+   const topo=await response.json();
+   const land=topojson.feature(topo,topo.objects.land);
+
+   globe=Globe()(document.getElementById("globe"))
+     .backgroundColor("#050607")
+     .showAtmosphere(true)
+     .atmosphereColor("#527b9d")
+     .atmosphereAltitude(0.12)
+     .showGraticules(false)
+     .showGlobe(true)
+     .globeImageUrl(
+       "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+     )
+     .polygonsData([])
+     .polygonCapColor(()=> "rgba(255,138,36,0.025)")
+     .polygonSideColor(()=> "rgba(255,138,36,0.01)")
+     .polygonStrokeColor(()=>ORANGE)
+     .polygonAltitude(0.0015)
+     .polygonLabel(p=>
+       `<div style="background:#111;padding:9px;border:1px solid ${ORANGE};border-radius:7px;color:white">
+       <b>${p.id}</b><br>Price: $${p.price}<br>Demo parcel</div>`
+     )
+     .onPolygonClick(selectParcel);
+
+   globe.controls().enableDamping=true;
+   globe.controls().dampingFactor=0.08;
+   globe.controls().autoRotate=true;
+   globe.controls().autoRotateSpeed=0.35;
+   globe.pointOfView({lat:20,lng:10,altitude:2.3},0);
+
+   /*
+     This is a lightweight prototype grid, not the final 500,000-parcel
+     inventory. Cells are accepted only when their corners lie on land.
+     Small islands and coastal areas may be omitted at this resolution.
+   */
+   const step=1.15;
+   const all=[];
+
+   for(let lat=-83;lat<=83;lat+=step){
+     const lonStep=step/Math.max(0.35,Math.cos(lat*Math.PI/180));
+     for(let lon=-179;lon<180;lon+=lonStep){
+       const points=[
+         [lon-step/2,lat-step/2],
+         [lon+step/2,lat-step/2],
+         [lon+step/2,lat+step/2],
+         [lon-step/2,lat+step/2]
+       ];
+
+       if(!points.every(point=>d3.geoContains(land,point)))continue;
+
+       const p=makePolygon(lat,lon,step,"");
+       p.polygon=p.polygon.map(c=>[
+         Math.max(-89.8,Math.min(89.8,c[0])),
+         c[1]
+       ]);
+       all.push(p);
+     }
+   }
+
+   /*
+     Limit the number of polygons rendered at once for performance.
+     The full inventory needs a proper geospatial dataset and backend.
+   */
+   const CAP=12000;
+   const stride=Math.max(1,Math.ceil(all.length/CAP));
+   const visible=all.filter((_,i)=>i%stride===0).slice(0,CAP);
+
+   visible.forEach((p,i)=>{
+     p.id="EG-"+String(i+1).padStart(6,"0");
+     parcelMap.set(p.id,p);
+   });
+
+   globe.polygonsData(visible);
+   setText("count",visible.length.toLocaleString("en-US"));
+
+   document.getElementById("find").onclick=()=>{
+     const id=document.getElementById("search").value.trim().toUpperCase();
+     const p=parcelMap.get(id);
+     if(!p){
+       setText("title","Parcel not found");
+       setText("parcelId","Try an ID such as EG-000001");
+       setText("price","—");
+       setText("owner","Owner: —");
+       return;
+     }
+     selectParcel(p);
+     globe.pointOfView({lat:p.lat,lng:p.lon,altitude:0.5},900);
+   };
+
+   document.getElementById("search").addEventListener("keydown",e=>{
+     if(e.key==="Enter")document.getElementById("find").click();
+   });
+
+   document.getElementById("reset").onclick=()=>{
+     globe.pointOfView({lat:20,lng:10,altitude:2.3},900);
+     setText("title","Select an orange parcel");
+     setText("parcelId","No parcel selected");
+     setText("price","—");
+     setText("owner","Owner: Unclaimed demo parcel");
+     document.getElementById("search").value="";
+   };
+
+   document.getElementById("zoomIn").onclick=()=>{
+     const p=globe.pointOfView();
+     globe.pointOfView({...p,altitude:Math.max(.25,p.altitude*.8)},300);
+   };
+
+   document.getElementById("zoomOut").onclick=()=>{
+     const p=globe.pointOfView();
+     globe.pointOfView({...p,altitude:Math.min(5,p.altitude*1.25)},300);
+   };
+
+   document.getElementById("rotate").onclick=()=>{
+     rotating=!rotating;
+     globe.controls().autoRotate=rotating;
+     document.getElementById("rotate").style.color=rotating?ORANGE:"#fff";
+   };
+
+ }catch(error){
+   setText("count","Unavailable");
+   setText("title","Globe could not load");
+   setText("parcelId","Check your internet connection");
+   setText("price","—");
+   setText("owner",error.message);
+   console.error(error);
+ }
+})();
+</script>
+</body>
+</html>
