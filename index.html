@@ -2,13 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EarthGrid | 3D Land Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EarthGrid | 3D Earth</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
@@ -16,249 +14,422 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: #050b16;
-  color: #ffffff;
+  color: white;
   font-family: Arial, sans-serif;
 }
 
-#globeViz {
-  position: absolute;
+#globe {
+  position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
 }
 
 .panel {
-  position: absolute;
-  z-index: 5;
-  top: 14px;
-  left: 14px;
-  width: min(350px, calc(100% - 28px));
-  padding: 18px;
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 16px;
-  background: rgba(5,12,26,.91);
-  box-shadow: 0 8px 35px rgba(0,0,0,.35);
-  backdrop-filter: blur(12px);
+  position: fixed;
+  z-index: 10;
+  top: 12px;
+  left: 12px;
+  width: min(330px, calc(100% - 24px));
+  padding: 15px;
+  border: 1px solid #39465a;
+  border-radius: 14px;
+  background: rgba(5, 12, 27, .94);
 }
 
 h1 {
-  margin: 0 0 5px;
-  font-size: 25px;
-  color: #f3bd61;
-  letter-spacing: 1px;
+  margin: 0;
+  color: #f5bd60;
+  font-size: 26px;
 }
 
 .subtitle {
-  margin-bottom: 15px;
-  color: #aab8cc;
-  font-size: 12px;
+  margin: 5px 0 14px;
+  color: #b6c3d5;
+  font-size: 11px;
 }
 
 input {
-  display: block;
   width: 100%;
   padding: 12px;
-  margin-bottom: 9px;
-  border: 1px solid #39475d;
-  border-radius: 8px;
-  outline: none;
-  background: #101c30;
+  margin-bottom: 8px;
+  border: 1px solid #526077;
+  border-radius: 7px;
+  background: #101b2d;
   color: white;
   font-size: 14px;
 }
 
-button {
-  padding: 11px;
-  border: 0;
-  border-radius: 8px;
-  background: #eab45b;
-  color: #101522;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:active {
-  transform: scale(.98);
-}
-
-.actions {
+.buttons {
   display: flex;
   gap: 8px;
 }
 
-.actions button {
+button {
   flex: 1;
+  padding: 11px 7px;
+  border: none;
+  border-radius: 7px;
+  background: #f0b75b;
+  color: #101522;
+  font-weight: bold;
 }
 
 #status {
   margin-top: 12px;
   padding: 10px;
-  border-radius: 8px;
-  background: rgba(255,255,255,.06);
-  color: #d2dbea;
+  background: #101b2d;
+  border-radius: 7px;
+  color: #e0e8f4;
   font-size: 12px;
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
-#parcelInfo {
-  margin-top: 12px;
-  padding: 12px;
-  border: 1px solid rgba(234,180,91,.4);
-  border-radius: 9px;
-  background: rgba(234,180,91,.08);
-  line-height: 1.8;
-  font-size: 13px;
+#info {
   display: none;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #c99445;
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 1.8;
 }
 
-#parcelInfo strong {
-  color: #f3bd61;
+#info strong {
+  color: #f5bd60;
 }
 
 #legend {
-  position: absolute;
-  z-index: 4;
-  bottom: 18px;
-  right: 15px;
-  padding: 11px 14px;
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: 10px;
-  background: rgba(5,12,26,.85);
-  font-size: 12px;
-  line-height: 1.9;
-}
-
-.dot {
-  display: inline-block;
-  width: 9px;
-  height: 9px;
-  margin-right: 6px;
-  border-radius: 50%;
-  background: #ffad42;
-}
-
-#hint {
-  position: absolute;
-  z-index: 3;
-  bottom: 18px;
-  left: 15px;
-  max-width: 50%;
-  color: #b9c7d9;
+  position: fixed;
+  z-index: 5;
+  right: 10px;
+  bottom: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(5, 12, 27, .9);
   font-size: 11px;
+  line-height: 1.8;
 }
 
 @media (max-width: 500px) {
   .panel {
     top: 8px;
     left: 8px;
-    padding: 13px;
-    width: min(310px, calc(100% - 16px));
+    width: min(300px, calc(100% - 16px));
+    padding: 12px;
   }
 
-  h1 {
-    font-size: 22px;
-  }
-
-  #legend {
-    bottom: 10px;
-    right: 8px;
-    font-size: 10px;
-  }
-
-  #hint {
-    bottom: 10px;
-    left: 8px;
-    max-width: 43%;
-  }
+  h1 { font-size: 23px; }
+  #legend { font-size: 10px; }
 }
 </style>
 </head>
 
 <body>
 
-<div id="globeViz"></div>
+<div id="globe"></div>
 
 <div class="panel">
   <h1>EarthGrid</h1>
-  <div class="subtitle">
-    INTERACTIVE 3D LAND EXPLORER
+  <div class="subtitle">INTERACTIVE 3D EARTH EXPLORER</div>
+
+  <input id="search" placeholder="Search parcel: EG-1001">
+
+  <div class="buttons">
+    <button id="searchButton">Search</button>
+    <button id="resetButton">Reset Earth</button>
   </div>
 
-  <input
-    id="searchInput"
-    type="text"
-    placeholder="Search parcel ID, e.g. EG-1001"
-  >
+  <div id="status">Starting EarthGrid...</div>
 
-  <div class="actions">
-    <button id="searchBtn">Search</button>
-    <button id="resetBtn">Reset Globe</button>
-  </div>
-
-  <div id="status">
-    Initializing the 3D Earth...
-  </div>
-
-  <div id="parcelInfo">
-    <div>Parcel: <strong id="parcelId">—</strong></div>
-    <div>Latitude: <strong id="parcelLat">—</strong></div>
-    <div>Longitude: <strong id="parcelLon">—</strong></div>
-    <div>Demo price: <strong id="parcelPrice">—</strong></div>
-    <div style="margin-top:6px;color:#aab8cc;font-size:11px">
-      Demonstration parcel only. Not a legal land title.
-    </div>
+  <div id="info">
+    Parcel ID: <strong id="pid"></strong><br>
+    Latitude: <strong id="plat"></strong><br>
+    Longitude: <strong id="plon"></strong><br>
+    Demo price: <strong id="price"></strong>
+    <br>
+    <small>Demo parcel only. Not legal land ownership.</small>
   </div>
 </div>
 
 <div id="legend">
-  <div><span class="dot"></span>Land parcel boundaries</div>
-  <div>Tap a parcel to select it</div>
-  <div>Drag to rotate · Pinch to zoom</div>
-</div>
-
-<div id="hint">
-  EARTHGRID · INTERACTIVE GLOBE
+  🟠 Land parcel boundaries<br>
+  Drag to rotate<br>
+  Pinch to zoom
 </div>
 
 <script>
 (function () {
   "use strict";
 
-  const statusBox = document.getElementById("status");
-  const infoBox = document.getElementById("parcelInfo");
+  const status = document.getElementById("status");
+  const info = document.getElementById("info");
 
-  let globe = null;
+  let earth = null;
+  let land = null;
   let parcels = [];
-  let selectedParcel = null;
-  let landFeature = null;
-  let nextId = 1001;
+  let selected = null;
 
-  function setStatus(message) {
-    statusBox.textContent = message;
+  function message(text) {
+    status.textContent = text;
   }
-
-  function showError(message) {
-    setStatus("Loading error: " + message);
-  }
-
-  window.addEventListener("error", function (event) {
-    if (event && event.message) {
-      showError(event.message);
-    }
-  });
 
   function loadScript(url) {
     return new Promise(function (resolve, reject) {
       const script = document.createElement("script");
-
       script.src = url;
-      script.async = true;
-
       script.onload = resolve;
-
       script.onerror = function () {
-        reject(new Error("Could not load library: " + url));
+        reject(new Error("Cannot load: " + url));
       };
+      document.head.appendChild(script);
+    });
+  }
 
-      document.head.append
+  function showParcel(p) {
+    selected = p;
+
+    document.getElementById("pid").textContent =
+      p.properties.id;
+
+    document.getElementById("plat").textContent =
+      p.properties.lat.toFixed(2) + "°";
+
+    document.getElementById("plon").textContent =
+      p.properties.lon.toFixed(2) + "°";
+
+    document.getElementById("price").textContent =
+      "$" + p.properties.price.toLocaleString("en-US");
+
+    info.style.display = "block";
+
+    if (earth) {
+      earth.polygonsData(parcels.slice());
+    }
+  }
+
+  function buildParcels() {
+    parcels = [];
+
+    let id = 1001;
+    const step = 3;
+
+    for (let lat = -54; lat <= 75; lat += step) {
+      for (let lon = -180; lon < 180; lon += step) {
+        const x = lon + step / 2;
+        const y = lat + step / 2;
+
+        if (!d3.geoContains(land, [x, y])) {
+          continue;
+        }
+
+        const corners = [
+          [lon, lat],
+          [lon + step, lat],
+          [lon + step, lat + step],
+          [lon, lat + step]
+        ];
+
+        if (!corners.every(function (point) {
+          return d3.geoContains(land, point);
+        })) {
+          continue;
+        }
+
+        parcels.push({
+          type: "Feature",
+          properties: {
+            id: "EG-" + id++,
+            lat: y,
+            lon: x,
+            price: 500 + ((id * 137) % 9500)
+          },
+          geometry: {
+            type: "Polygon",
+            coordinates: [[
+              [lon, lat],
+              [lon + step, lat],
+              [lon + step, lat + step],
+              [lon, lat + step],
+              [lon, lat]
+            ]]
+          }
+        });
+      }
+    }
+  }
+
+  async function start() {
+    try {
+      message("1/3: Loading 3D Earth library...");
+
+      await loadScript(
+        "https://unpkg.com/globe.gl"
+      );
+
+      if (typeof Globe !== "function") {
+        throw new Error("Globe library did not start.");
+      }
+
+      earth = Globe()(
+        document.getElementById("globe")
+      );
+
+      earth
+        .backgroundColor("#050b16")
+        .globeImageUrl(
+          "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        )
+        .showAtmosphere(true)
+        .atmosphereColor("#438ce0")
+        .atmosphereAltitude(0.16)
+        .polygonsData([])
+        .polygonGeoJsonGeometry(function (p) {
+          return p.geometry;
+        })
+        .polygonAltitude(function (p) {
+          return selected &&
+            selected.properties.id === p.properties.id
+            ? 0.012
+            : 0.003;
+        })
+        .polygonCapColor(function (p) {
+          return selected &&
+            selected.properties.id === p.properties.id
+            ? "rgba(255,220,100,0.7)"
+            : "rgba(255,165,50,0.12)";
+        })
+        .polygonSideColor(function () {
+          return "rgba(255,165,50,0.08)";
+        })
+        .polygonStrokeColor(function (p) {
+          return selected &&
+            selected.properties.id === p.properties.id
+            ? "#fff0a0"
+            : "#ffad42";
+        })
+        .polygonLabel(function (p) {
+          return "<b>" + p.properties.id + "</b>";
+        })
+        .onPolygonClick(function (p) {
+          showParcel(p);
+          earth.pointOfView({
+            lat: p.properties.lat,
+            lng: p.properties.lon,
+            altitude: 1.8
+          }, 800);
+        });
+
+      earth.controls().autoRotate = true;
+      earth.controls().autoRotateSpeed = 0.35;
+
+      earth.pointOfView({
+        lat: 20,
+        lng: 0,
+        altitude: 2.5
+      }, 0);
+
+      message(
+        "Earth loaded. Loading geographical boundaries..."
+      );
+
+      await loadScript(
+        "https://cdn.jsdelivr.net/npm/d3-geo@3/dist/d3-geo.min.js"
+      );
+
+      await loadScript(
+        "https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"
+      );
+
+      const response = await fetch(
+        "https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json"
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Land data download failed: HTTP " + response.status
+        );
+      }
+
+      const world = await response.json();
+
+      land = topojson.feature(
+        world,
+        world.objects.land
+      );
+
+      message("Generating land parcel boundaries...");
+
+      buildParcels();
+
+      earth.polygonsData(parcels);
+
+      message(
+        "Ready! " + parcels.length +
+        " demonstration parcels loaded."
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      message(
+        "ERROR: " +
+        (error.message || "Loading failed") +
+        ". Check internet connection and reload."
+      );
+    }
+  }
+
+  document.getElementById("searchButton")
+    .addEventListener("click", function () {
+      const query = document.getElementById("search")
+        .value.trim().toUpperCase();
+
+      const parcel = parcels.find(function (p) {
+        return p.properties.id === query;
+      });
+
+      if (!parcel) {
+        message("Parcel not found. Try EG-1001.");
+        return;
+      }
+
+      showParcel(parcel);
+
+      earth.pointOfView({
+        lat: parcel.properties.lat,
+        lng: parcel.properties.lon,
+        altitude: 1.8
+      }, 1000);
+    });
+
+  document.getElementById("search")
+    .addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        document.getElementById("searchButton").click();
+      }
+    });
+
+  document.getElementById("resetButton")
+    .addEventListener("click", function () {
+      selected = null;
+      info.style.display = "none";
+
+      if (earth) {
+        earth.pointOfView({
+          lat: 20,
+          lng: 0,
+          altitude: 2.5
+        }, 1000);
+
+        earth.polygonsData(parcels.slice());
+      }
+
+      message("EarthGrid is ready.");
+    });
+
+  start();
+})();
+</script>
+
+</body>
+</html>
