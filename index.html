@@ -2,140 +2,263 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#05080d">
-<title>EarthGrid | Explore Digital Land</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarthGrid | 3D Land Explorer</title>
 
 <style>
-:root {
-  --bg: #05080d;
-  --panel: rgba(10, 16, 26, .96);
-  --orange: #ff8a24;
-  --text: #f5f7fa;
-  --muted: #a8b2c2;
-}
-
 * {
   box-sizing: border-box;
 }
 
 html, body {
+  margin: 0;
   width: 100%;
   height: 100%;
-  margin: 0;
   overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
+  background: #050b16;
+  color: #ffffff;
   font-family: Arial, sans-serif;
 }
 
 #globeViz {
-  position: fixed;
+  position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
-  padding: 18px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(
-    to bottom,
-    rgba(5,8,13,.95),
-    transparent
-  );
-  pointer-events: none;
-}
-
-.logo {
-  font-size: 23px;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-
-.logo span {
-  color: var(--orange);
-}
-
-.badge {
-  color: #ffb36c;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-}
-
 .panel {
-  position: fixed;
-  z-index: 20;
-  left: 16px;
-  bottom: 16px;
-  width: min(350px, calc(100vw - 32px));
-  max-height: 55vh;
-  overflow-y: auto;
-  padding: 17px;
-  border: 1px solid rgba(255,138,36,.45);
-  border-radius: 15px;
-  background: var(--panel);
-  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+  position: absolute;
+  z-index: 5;
+  top: 14px;
+  left: 14px;
+  width: min(350px, calc(100% - 28px));
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 16px;
+  background: rgba(5,12,26,.91);
+  box-shadow: 0 8px 35px rgba(0,0,0,.35);
   backdrop-filter: blur(12px);
 }
 
-.panel h2 {
-  margin: 0 0 8px;
-  font-size: 18px;
+h1 {
+  margin: 0 0 5px;
+  font-size: 25px;
+  color: #f3bd61;
+  letter-spacing: 1px;
 }
 
-.description {
-  margin: 0 0 13px;
-  color: var(--muted);
+.subtitle {
+  margin-bottom: 15px;
+  color: #aab8cc;
   font-size: 12px;
-  line-height: 1.6;
-}
-
-.search {
-  display: flex;
-  gap: 8px;
 }
 
 input {
-  width: 0;
-  min-width: 0;
-  flex: 1;
-  padding: 12px 10px;
-  border: 1px solid #354154;
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 9px;
+  border: 1px solid #39475d;
   border-radius: 8px;
   outline: none;
+  background: #101c30;
   color: white;
-  background: #131c29;
-  font-size: 13px;
-}
-
-input:focus {
-  border-color: var(--orange);
+  font-size: 14px;
 }
 
 button {
-  border: none;
+  padding: 11px;
+  border: 0;
   border-radius: 8px;
-  padding: 11px 13px;
-  background: var(--orange);
-  color: #17100a;
-  font-size: 12px;
-  font-weight: 800;
+  background: #eab45b;
+  color: #101522;
+  font-weight: bold;
   cursor: pointer;
 }
 
 button:active {
-  transform: scale(.97);
+  transform: scale(.98);
 }
 
-.secondary {
-  margin-top: 8px;
-  width: 100%;
-  color: #
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions button {
+  flex: 1;
+}
+
+#status {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.06);
+  color: #d2dbea;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+#parcelInfo {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid rgba(234,180,91,.4);
+  border-radius: 9px;
+  background: rgba(234,180,91,.08);
+  line-height: 1.8;
+  font-size: 13px;
+  display: none;
+}
+
+#parcelInfo strong {
+  color: #f3bd61;
+}
+
+#legend {
+  position: absolute;
+  z-index: 4;
+  bottom: 18px;
+  right: 15px;
+  padding: 11px 14px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  background: rgba(5,12,26,.85);
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #ffad42;
+}
+
+#hint {
+  position: absolute;
+  z-index: 3;
+  bottom: 18px;
+  left: 15px;
+  max-width: 50%;
+  color: #b9c7d9;
+  font-size: 11px;
+}
+
+@media (max-width: 500px) {
+  .panel {
+    top: 8px;
+    left: 8px;
+    padding: 13px;
+    width: min(310px, calc(100% - 16px));
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  #legend {
+    bottom: 10px;
+    right: 8px;
+    font-size: 10px;
+  }
+
+  #hint {
+    bottom: 10px;
+    left: 8px;
+    max-width: 43%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="globeViz"></div>
+
+<div class="panel">
+  <h1>EarthGrid</h1>
+  <div class="subtitle">
+    INTERACTIVE 3D LAND EXPLORER
+  </div>
+
+  <input
+    id="searchInput"
+    type="text"
+    placeholder="Search parcel ID, e.g. EG-1001"
+  >
+
+  <div class="actions">
+    <button id="searchBtn">Search</button>
+    <button id="resetBtn">Reset Globe</button>
+  </div>
+
+  <div id="status">
+    Initializing the 3D Earth...
+  </div>
+
+  <div id="parcelInfo">
+    <div>Parcel: <strong id="parcelId">—</strong></div>
+    <div>Latitude: <strong id="parcelLat">—</strong></div>
+    <div>Longitude: <strong id="parcelLon">—</strong></div>
+    <div>Demo price: <strong id="parcelPrice">—</strong></div>
+    <div style="margin-top:6px;color:#aab8cc;font-size:11px">
+      Demonstration parcel only. Not a legal land title.
+    </div>
+  </div>
+</div>
+
+<div id="legend">
+  <div><span class="dot"></span>Land parcel boundaries</div>
+  <div>Tap a parcel to select it</div>
+  <div>Drag to rotate · Pinch to zoom</div>
+</div>
+
+<div id="hint">
+  EARTHGRID · INTERACTIVE GLOBE
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const statusBox = document.getElementById("status");
+  const infoBox = document.getElementById("parcelInfo");
+
+  let globe = null;
+  let parcels = [];
+  let selectedParcel = null;
+  let landFeature = null;
+  let nextId = 1001;
+
+  function setStatus(message) {
+    statusBox.textContent = message;
+  }
+
+  function showError(message) {
+    setStatus("Loading error: " + message);
+  }
+
+  window.addEventListener("error", function (event) {
+    if (event && event.message) {
+      showError(event.message);
+    }
+  });
+
+  function loadScript(url) {
+    return new Promise(function (resolve, reject) {
+      const script = document.createElement("script");
+
+      script.src = url;
+      script.async = true;
+
+      script.onload = resolve;
+
+      script.onerror = function () {
+        reject(new Error("Could not load library: " + url));
+      };
+
+      document.head.append
