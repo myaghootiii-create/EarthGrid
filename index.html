@@ -2,109 +2,132 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EarthGrid | Digital Land</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#05080d">
+<title>EarthGrid | Explore Digital Land</title>
 
 <style>
+:root {
+  --bg: #05080d;
+  --panel: rgba(10, 16, 26, .96);
+  --orange: #ff8a24;
+  --text: #f5f7fa;
+  --muted: #a8b2c2;
+}
+
 * {
   box-sizing: border-box;
 }
 
-body {
+html, body {
+  width: 100%;
+  height: 100%;
   margin: 0;
-  background: #05080d;
-  color: #f4f4f4;
-  font-family: Arial, sans-serif;
   overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+#globeViz {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 header {
-  position: absolute;
-  z-index: 5;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  padding: 17px 20px;
+  right: 0;
+  z-index: 10;
+  padding: 18px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(#05080ddd, transparent);
+  background: linear-gradient(
+    to bottom,
+    rgba(5,8,13,.95),
+    transparent
+  );
   pointer-events: none;
 }
 
 .logo {
   font-size: 23px;
-  font-weight: bold;
+  font-weight: 800;
   letter-spacing: 2px;
 }
 
 .logo span {
-  color: #ff8a24;
+  color: var(--orange);
 }
 
-.status {
+.badge {
   color: #ffb36c;
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-#globeViz {
-  width: 100vw;
-  height: 100dvh;
+  font-size: 10px;
+  letter-spacing: 1.5px;
 }
 
 .panel {
-  position: absolute;
-  z-index: 5;
-  left: 15px;
-  bottom: 18px;
-  width: min(340px, calc(100vw - 30px));
+  position: fixed;
+  z-index: 20;
+  left: 16px;
+  bottom: 16px;
+  width: min(350px, calc(100vw - 32px));
+  max-height: 55vh;
+  overflow-y: auto;
   padding: 17px;
-  background: rgba(10, 15, 23, 0.94);
-  border: 1px solid #ff8a2455;
-  border-radius: 14px;
-  box-shadow: 0 8px 35px #0008;
+  border: 1px solid rgba(255,138,36,.45);
+  border-radius: 15px;
+  background: var(--panel);
+  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+  backdrop-filter: blur(12px);
 }
 
 .panel h2 {
-  margin: 0 0 7px;
-  font-size: 17px;
+  margin: 0 0 8px;
+  font-size: 18px;
 }
 
-.panel p {
-  color: #aab3c0;
+.description {
+  margin: 0 0 13px;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.6;
 }
 
 .search {
   display: flex;
-  gap: 7px;
-  margin-top: 13px;
+  gap: 8px;
 }
 
 input {
+  width: 0;
   min-width: 0;
   flex: 1;
-  padding: 12px;
-  color: white;
-  background: #151d29;
-  border: 1px solid #354152;
+  padding: 12px 10px;
+  border: 1px solid #354154;
   border-radius: 8px;
   outline: none;
+  color: white;
+  background: #131c29;
+  font-size: 13px;
 }
 
 input:focus {
-  border-color: #ff8a24;
+  border-color: var(--orange);
 }
 
 button {
-  padding: 11px 13px;
-  color: #15100a;
-  background: #ff8a24;
-  border: 0;
+  border: none;
   border-radius: 8px;
-  font-weight: bold;
+  padding: 11px 13px;
+  background: var(--orange);
+  color: #17100a;
+  font-size: 12px;
+  font-weight: 800;
   cursor: pointer;
 }
 
@@ -112,132 +135,7 @@ button:active {
   transform: scale(.97);
 }
 
-#result {
-  margin-top: 13px;
-  padding-top: 12px;
-  border-top: 1px solid #303947;
-  font-size: 13px;
-  line-height: 1.8;
-  overflow-wrap: anywhere;
-}
-
-.price {
-  color: #ffae61;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.hint {
-  color: #8e9bab;
-  font-size: 11px;
-  margin-top: 10px;
-}
-
-#message {
-  color: #ffb36c;
-  font-size: 12px;
-  margin-top: 9px;
-}
-
-@media (max-width: 500px) {
-  .logo {
-    font-size: 19px;
-  }
-
-  header {
-    padding: 14px;
-  }
-
-  .panel {
-    bottom: 12px;
-    left: 10px;
-    width: calc(100vw - 20px);
-    padding: 13px;
-  }
-
-  .panel h2 {
-    font-size: 15px;
-  }
-
-  .panel p {
-    margin: 6px 0;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <div class="logo">EARTH<span>GRID</span></div>
-  <div class="status">3D DIGITAL LAND</div>
-</header>
-
-<div id="globeViz"></div>
-
-<section class="panel">
-  <h2>Explore the Earth</h2>
-
-  <p>
-    Select an orange parcel on the globe to view its
-    identification number and demo price.
-  </p>
-
-  <div class="search">
-    <input
-      id="searchInput"
-      type="text"
-      placeholder="Enter parcel ID, e.g. EG-1001"
-      autocomplete="off"
-    >
-    <button id="searchButton">Search</button>
-  </div>
-
-  <div id="result">
-    Select a parcel to see its details.
-  </div>
-
-  <div id="message"></div>
-
-  <div class="hint">
-    Demo only · Prices are illustrative · No legal ownership
-  </div>
-</section>
-
-<script src="https://unpkg.com/globe.gl"></script>
-<script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
-
-<script>
-(() => {
-  const result = document.getElementById("result");
-  const message = document.getElementById("message");
-  const searchInput = document.getElementById("searchInput");
-  const searchButton = document.getElementById("searchButton");
-
-  let globe;
-  let parcels = [];
-  let selectedParcel = null;
-
-  function parcelId(index) {
-    return "EG-" + (1001 + index);
-  }
-
-  function parcelPrice(lat, lon) {
-    const value = Math.abs(
-      Math.round(
-        (lat + 90) * 173 +
-        (lon + 180) * 97
-      )
-    );
-
-    return 100 + (value % 4900);
-  }
-
-  function showParcel(parcel) {
-    if (!parcel) return;
-
-    selectedParcel = parcel;
-
-    result.innerHTML = `
-      <div>
+.secondary {
+  margin-top: 8px;
+  width: 100%;
+  color: #
