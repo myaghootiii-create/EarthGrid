@@ -1,276 +1,692 @@
-# EarthGrid
-Interactive 3D Earth parcel marketplace
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EarthGrid | Digital World</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarthGrid | Digital Land Parcels</title>
 
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#050607;color:#fff;font-family:Arial,sans-serif;overflow:hidden}
-#globe{position:absolute;inset:0}
-header{position:absolute;top:18px;left:20px;z-index:5}
-h1{font-size:25px;letter-spacing:5px;margin:0;color:#ff8a24}
-header p{font-size:10px;color:#aaa;letter-spacing:2px}
-.panel{
- position:absolute;top:100px;left:18px;z-index:5;width:290px;
- padding:18px;background:rgba(10,13,16,.94);
- border:1px solid #38312a;border-radius:14px;
+:root {
+  --bg: #07111b;
+  --panel: #0d1b28;
+  --orange: #ff8a24;
+  --gold: #e6b66a;
+  --text: #f5f7fa;
+  --muted: #aab7c4;
 }
-h2{font-size:21px;margin:8px 0}
-p{color:#aeb5bd;font-size:13px;line-height:1.6}
-input,button{
- width:100%;padding:12px;margin-top:8px;border-radius:8px;
- border:1px solid #454545;background:#111519;color:white
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
 }
-button{cursor:pointer;font-weight:bold}
-button.primary{background:#ff8a24;color:#17100a;border:0}
-.price{font-size:30px;font-weight:bold;color:#ff8a24;margin:10px 0}
-.label{font-size:10px;color:#ff8a24;letter-spacing:2px}
-.small{font-size:10px;color:#7e8790;line-height:1.5}
-.controls{position:absolute;right:16px;bottom:18px;z-index:5;display:flex;gap:7px}
-.controls button{width:44px;height:44px;font-size:20px;background:#101418}
-#hint{position:absolute;bottom:20px;left:18px;color:#aaa;font-size:11px;z-index:4}
-@media(max-width:600px){
- header{top:10px;left:12px}
- h1{font-size:20px}
- .panel{top:78px;left:10px;width:250px;padding:13px;max-height:70vh;overflow:auto}
- h2{font-size:18px}
- #hint{bottom:12px;left:10px;max-width:58%;font-size:10px}
- .controls{right:10px;bottom:10px}
- .controls button{width:38px;height:38px}
+
+#app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  height: 100vh;
+  min-height: 600px;
+}
+
+#globeWrap {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #102637, #07111b 75%);
+}
+
+#globeViz {
+  position: absolute;
+  inset: 0;
+}
+
+#brand {
+  position: absolute;
+  z-index: 2;
+  left: 22px;
+  top: 20px;
+  pointer-events: none;
+}
+
+#brand h1 {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 38px);
+  letter-spacing: 4px;
+}
+
+#brand p {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+#status {
+  position: absolute;
+  z-index: 3;
+  left: 15px;
+  bottom: 15px;
+  max-width: calc(100% - 30px);
+  padding: 10px 12px;
+  border: 1px solid #314557;
+  border-radius: 8px;
+  background: #08131ddd;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+#panel {
+  overflow-y: auto;
+  background: linear-gradient(180deg, #102131, #09131d);
+  border-left: 1px solid #263a4a;
+  padding: 20px 16px;
+}
+
+.eyebrow {
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 8px 0 16px;
+  font-size: 20px;
+}
+
+.card {
+  background: #102131;
+  border: 1px solid #263d4e;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 12px 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+input, button {
+  width: 100%;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+input {
+  color: white;
+  background: #07131e;
+  border: 1px solid #354b5d;
+}
+
+button {
+  margin-top: 8px;
+  border: 0;
+  background: var(--orange);
+  color: #17110a;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.secondary {
+  color: white;
+  background: #203648;
+  border: 1px solid #3a5265;
+}
+
+.small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.price {
+  margin: 8px 0;
+  color: var(--gold);
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.metric {
+  padding: 10px;
+  background: #091722;
+  border-radius: 8px;
+}
+
+.metric span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.metric strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 17px;
+}
+
+.pill {
+  display: inline-block;
+  margin: 3px 2px;
+  padding: 5px 8px;
+  border: 1px solid #395164;
+  border-radius: 20px;
+  color: #d6e1e9;
+  font-size: 11px;
+}
+
+.legend {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.swatch {
+  display: inline-block;
+  width: 18px;
+  height: 3px;
+  margin-right: 6px;
+  background: var(--orange);
+  vertical-align: middle;
+}
+
+.error { color: #ffb4a8; }
+
+@media (max-width: 760px) {
+  #app {
+    grid-template-columns: 1fr;
+    grid-template-rows: 55vh auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  #globeWrap { min-height: 360px; }
+
+  #panel {
+    border-left: 0;
+    border-top: 1px solid #263a4a;
+  }
 }
 </style>
 </head>
 
 <body>
-<div id="globe"></div>
+<div id="app">
 
-<header>
-  <h1>EARTHGRID</h1>
-  <p>A WORLD OF DIGITAL PARCELS</p>
-</header>
+  <main id="globeWrap">
+    <div id="brand">
+      <h1>EARTHGRID</h1>
+      <p>EXPLORE · SELECT · COLLECT</p>
+    </div>
 
-<section class="panel">
-  <div class="label">EXPLORE THE WORLD</div>
-  <h2>Find your piece of Earth.</h2>
-  <p>Rotate the globe, explore land parcels and select a parcel to preview its proposed price.</p>
+    <div id="globeViz"></div>
 
-  <p>Visible parcels: <strong id="count">Loading...</strong></p>
+    <div id="status">
+      در حال بارگذاری کره سه‌بعدی و نقشه خشکی‌های زمین...
+    </div>
+  </main>
 
-  <input id="search" placeholder="Parcel ID: EG-000001">
-  <button class="primary" id="find">Find parcel</button>
-  <button id="reset">Reset globe</button>
+  <aside id="panel">
+    <div class="eyebrow">Digital Land Concept</div>
+    <h2>Explore EarthGrid</h2>
 
-  <hr style="border-color:#292d31;margin-top:16px">
+    <div class="card">
+      <label for="searchId">جست‌وجو با شناسه قطعه</label>
 
-  <div class="label">SELECTED PARCEL</div>
-  <h3 id="title">Select an orange parcel</h3>
-  <div id="parcelId" style="color:#ff8a24">No parcel selected</div>
-  <div class="price" id="price">—</div>
-  <div id="owner">Owner: Unclaimed demo parcel</div>
+      <input
+        id="searchId"
+        placeholder="مثال: EG-000123"
+        autocomplete="off"
+      >
 
-  <p class="small">
-    DEMO ONLY. Parcels and prices are illustrative. No real land ownership,
-    account registration, or payment is available in this prototype.
-  </p>
-</section>
+      <button id="searchBtn">جست‌وجوی قطعه</button>
+      <button id="resetBtn" class="secondary">بازگشت به نمای اولیه</button>
 
-<div id="hint">Drag to rotate · Scroll or pinch to zoom · Tap a parcel</div>
+      <div id="searchMessage" class="small"></div>
+    </div>
 
-<div class="controls">
-  <button id="zoomIn">+</button>
-  <button id="zoomOut">−</button>
-  <button id="rotate">⟳</button>
+    <div class="card">
+      <div class="eyebrow">Selected Parcel</div>
+
+      <h3 id="selectedId">هنوز قطعه‌ای انتخاب نشده</h3>
+
+      <div class="price" id="selectedPrice">—</div>
+
+      <div class="small" id="selectedRegion">
+        برای انتخاب قطعه، روی یکی از قطعات کره بزن.
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div class="metric">
+          <span>عرض جغرافیایی</span>
+          <strong id="latValue">—</strong>
+        </div>
+
+        <div class="metric">
+          <span>طول جغرافیایی</span>
+          <strong id="lonValue">—</strong>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span class="swatch"></span>
+        مرز تقریبی قطعات
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Regional Prices</div>
+
+      <div style="margin-top:10px">
+        <span class="pill">آسیا: $1</span>
+        <span class="pill">اروپا: $5</span>
+        <span class="pill">آمریکای شمالی: $10</span>
+        <span class="pill">آفریقا: $2</span>
+        <span class="pill">آمریکای جنوبی: $3</span>
+        <span class="pill">اقیانوسیه: $4</span>
+        <span class="pill">قطبی: $1</span>
+      </div>
+
+      <p class="small">
+        این قیمت‌ها صرفاً نمایشی و مربوط به قطعات دیجیتال این نمونه هستند.
+        آن‌ها مالکیت قانونی زمین واقعی را ایجاد نمی‌کنند.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Prototype Statistics</div>
+
+      <div class="row" style="margin-top:10px">
+        <div class="metric">
+          <span>قطعات بارگذاری‌شده</span>
+          <strong id="parcelCount">0</strong>
+        </div>
+
+        <div class="metric">
+          <span>هدف نهایی</span>
+          <strong>500,000</strong>
+        </div>
+      </div>
+
+      <p class="small">
+        این نسخه یک نمونه اولیه است. تعداد قطعات بارگذاری‌شده
+        لزوماً ۵۰۰ هزار نیست. ثبت‌نام، مالکیت دائمی، تصاویر کاربران،
+        پایگاه داده و پرداخت واقعی هنوز فعال نیستند.
+      </p>
+    </div>
+  </aside>
 </div>
 
-<script src="https://unpkg.com/three"></script>
 <script src="https://unpkg.com/globe.gl"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 
 <script>
-(async function(){
- const ORANGE="#ff8a24";
- const parcelMap=new Map();
- let globe;
- let selected=null;
- let rotating=true;
+(() => {
+  const statusEl = document.getElementById("status");
+  const countEl = document.getElementById("parcelCount");
 
- const setText=(id,value)=>{
-   document.getElementById(id).textContent=value;
- };
+  const selectedIdEl = document.getElementById("selectedId");
+  const selectedPriceEl = document.getElementById("selectedPrice");
+  const selectedRegionEl = document.getElementById("selectedRegion");
 
- function priceFor(lat,lon){
-   if(Math.abs(lat)>=66)return 1;
-   if(lon>=-25&&lon<=60&&lat>=34&&lat<=72)return 5;
-   if(lon>=-170&&lon<=-30)return 10;
-   if(lon>=60&&lon<=180&&lat>=-10&&lat<=78)return 1;
-   if(lat<=0&&lon>=-20&&lon<=55)return 2;
-   if(lon>=-82&&lon<=-30&&lat<=15)return 3;
-   if(lon>=110&&lat<=0)return 4;
-   return 2;
- }
+  const latEl = document.getElementById("latValue");
+  const lonEl = document.getElementById("lonValue");
 
- function selectParcel(p){
-   selected=p;
-   setText("title","Digital land parcel");
-   setText("parcelId",p.id);
-   setText("price","$"+p.price.toFixed(2));
-   setText("owner",p.owner?"Owner: "+p.owner:"Owner: Unclaimed demo parcel");
-   document.getElementById("search").value=p.id;
- }
+  const searchMessage = document.getElementById("searchMessage");
 
- function makePolygon(lat,lon,size,id){
-   const h=size/2;
-   return {
-     id:id,
-     lat:lat,
-     lon:lon,
-     price:priceFor(lat,lon),
-     owner:null,
-     polygon:[
-       [lat-h,lon-h],
-       [lat-h,lon+h],
-       [lat+h,lon+h],
-       [lat+h,lon-h]
-     ]
-   };
- }
+  let globe = null;
+  let parcels = [];
+  let selectedParcel = null;
 
- try{
-   const response=await fetch(
-     "https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json"
-   );
-   if(!response.ok)throw new Error("Could not load world map.");
-   const topo=await response.json();
-   const land=topojson.feature(topo,topo.objects.land);
+  function getRegion(lat, lon) {
+    if (lat > 66 || lat < -60) {
+      return { name: "Polar regions", price: 1 };
+    }
 
-   globe=Globe()(document.getElementById("globe"))
-     .backgroundColor("#050607")
-     .showAtmosphere(true)
-     .atmosphereColor("#527b9d")
-     .atmosphereAltitude(0.12)
-     .showGraticules(false)
-     .showGlobe(true)
-     .globeImageUrl(
-       "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-     )
-     .polygonsData([])
-     .polygonCapColor(()=> "rgba(255,138,36,0.025)")
-     .polygonSideColor(()=> "rgba(255,138,36,0.01)")
-     .polygonStrokeColor(()=>ORANGE)
-     .polygonAltitude(0.0015)
-     .polygonLabel(p=>
-       `<div style="background:#111;padding:9px;border:1px solid ${ORANGE};border-radius:7px;color:white">
-       <b>${p.id}</b><br>Price: $${p.price}<br>Demo parcel</div>`
-     )
-     .onPolygonClick(selectParcel);
+    if (lon >= -168 && lon < -30 && lat > 7) {
+      return { name: "North America", price: 10 };
+    }
 
-   globe.controls().enableDamping=true;
-   globe.controls().dampingFactor=0.08;
-   globe.controls().autoRotate=true;
-   globe.controls().autoRotateSpeed=0.35;
-   globe.pointOfView({lat:20,lng:10,altitude:2.3},0);
+    if (lon >= -82 && lon < -34 && lat <= 7 && lat > -57) {
+      return { name: "South America", price: 3 };
+    }
 
-   /*
-     This is a lightweight prototype grid, not the final 500,000-parcel
-     inventory. Cells are accepted only when their corners lie on land.
-     Small islands and coastal areas may be omitted at this resolution.
-   */
-   const step=1.15;
-   const all=[];
+    if (lon >= -20 && lon < 52 && lat > -36 && lat < 38) {
+      return { name: "Africa", price: 2 };
+    }
 
-   for(let lat=-83;lat<=83;lat+=step){
-     const lonStep=step/Math.max(0.35,Math.cos(lat*Math.PI/180));
-     for(let lon=-179;lon<180;lon+=lonStep){
-       const points=[
-         [lon-step/2,lat-step/2],
-         [lon+step/2,lat-step/2],
-         [lon+step/2,lat+step/2],
-         [lon-step/2,lat+step/2]
-       ];
+    if (lon >= -12 && lon < 45 && lat >= 35) {
+      return { name: "Europe", price: 5 };
+    }
 
-       if(!points.every(point=>d3.geoContains(land,point)))continue;
+    if (lon >= 45 && lon < 180 && lat > -10) {
+      return { name: "Asia", price: 1 };
+    }
 
-       const p=makePolygon(lat,lon,step,"");
-       p.polygon=p.polygon.map(c=>[
-         Math.max(-89.8,Math.min(89.8,c[0])),
-         c[1]
-       ]);
-       all.push(p);
-     }
-   }
+    if ((lon >= 110 || lon < -150) && lat <= 0 && lat > -50) {
+      return { name: "Oceania", price: 4 };
+    }
 
-   /*
-     Limit the number of polygons rendered at once for performance.
-     The full inventory needs a proper geospatial dataset and backend.
-   */
-   const CAP=12000;
-   const stride=Math.max(1,Math.ceil(all.length/CAP));
-   const visible=all.filter((_,i)=>i%stride===0).slice(0,CAP);
+    if (lon >= -180 && lon < -30 && lat <= 7 && lat > -60) {
+      return { name: "South America", price: 3 };
+    }
 
-   visible.forEach((p,i)=>{
-     p.id="EG-"+String(i+1).padStart(6,"0");
-     parcelMap.set(p.id,p);
-   });
+    return { name: "Asia", price: 1 };
+  }
 
-   globe.polygonsData(visible);
-   setText("count",visible.length.toLocaleString("en-US"));
+  function makeParcel(west, south, east, north, id, lat, lon) {
+    const region = getRegion(lat, lon);
 
-   document.getElementById("find").onclick=()=>{
-     const id=document.getElementById("search").value.trim().toUpperCase();
-     const p=parcelMap.get(id);
-     if(!p){
-       setText("title","Parcel not found");
-       setText("parcelId","Try an ID such as EG-000001");
-       setText("price","—");
-       setText("owner","Owner: —");
-       return;
-     }
-     selectParcel(p);
-     globe.pointOfView({lat:p.lat,lng:p.lon,altitude:0.5},900);
-   };
+    return {
+      type: "Feature",
+      properties: {
+        id: id,
+        centerLat: lat,
+        centerLon: lon,
+        region: region.name,
+        price: region.price
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [[
+          [west, south],
+          [east, south],
+          [east, north],
+          [west, north],
+          [west, south]
+        ]]
+      }
+    };
+  }
 
-   document.getElementById("search").addEventListener("keydown",e=>{
-     if(e.key==="Enter")document.getElementById("find").click();
-   });
+  function selectParcel(parcel) {
+    if (!parcel) return;
 
-   document.getElementById("reset").onclick=()=>{
-     globe.pointOfView({lat:20,lng:10,altitude:2.3},900);
-     setText("title","Select an orange parcel");
-     setText("parcelId","No parcel selected");
-     setText("price","—");
-     setText("owner","Owner: Unclaimed demo parcel");
-     document.getElementById("search").value="";
-   };
+    selectedParcel = parcel;
 
-   document.getElementById("zoomIn").onclick=()=>{
-     const p=globe.pointOfView();
-     globe.pointOfView({...p,altitude:Math.max(.25,p.altitude*.8)},300);
-   };
+    const p = parcel.properties;
 
-   document.getElementById("zoomOut").onclick=()=>{
-     const p=globe.pointOfView();
-     globe.pointOfView({...p,altitude:Math.min(5,p.altitude*1.25)},300);
-   };
+    selectedIdEl.textContent = p.id;
+    selectedPriceEl.textContent = "$" + p.price;
+    selectedRegionEl.textContent =
+      p.region + " · Digital parcel prototype";
 
-   document.getElementById("rotate").onclick=()=>{
-     rotating=!rotating;
-     globe.controls().autoRotate=rotating;
-     document.getElementById("rotate").style.color=rotating?ORANGE:"#fff";
-   };
+    latEl.textContent = p.centerLat.toFixed(2) + "°";
+    lonEl.textContent = p.centerLon.toFixed(2) + "°";
 
- }catch(error){
-   setText("count","Unavailable");
-   setText("title","Globe could not load");
-   setText("parcelId","Check your internet connection");
-   setText("price","—");
-   setText("owner",error.message);
-   console.error(error);
- }
+    document.getElementById("searchId").value = p.id;
+
+    if (globe) {
+      globe.pointOfView({
+        lat: p.centerLat,
+        lng: p.centerLon,
+        altitude: 1.5
+      }, 900);
+
+      globe.polygonCapColor(d =>
+        d.properties.id === p.id
+          ? "rgba(255,138,36,0.45)"
+          : "rgba(255,138,36,0.035)"
+      );
+    }
+  }
+
+  async function initializeGlobe() {
+    try {
+      if (
+        typeof Globe !== "function" ||
+        !window.d3 ||
+        !window.topojson
+      ) {
+        throw new Error(
+          "کتابخانه‌های موردنیاز بارگذاری نشدند. اتصال اینترنت را بررسی و صفحه را تازه‌سازی کن."
+        );
+      }
+
+      globe = Globe()(
+        document.getElementById("globeViz")
+      )
+        .backgroundColor("rgba(0,0,0,0)")
+        .showAtmosphere(true)
+        .atmosphereColor("#4d8fbc")
+        .atmosphereAltitude(0.18)
+        .showGraticules(false)
+        .globeImageUrl(
+          "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        )
+        .bumpImageUrl(
+          "https://unpkg.com/three-globe/example/img/earth-topology.png"
+        )
+        .polygonsData([])
+        .polygonGeoJsonGeometry(d => d.geometry)
+        .polygonCapColor(() => "rgba(255,138,36,0.035)")
+        .polygonSideColor(() => "rgba(255,138,36,0.04)")
+        .polygonStrokeColor(() => "#ff8a24")
+        .polygonAltitude(0.004)
+        .polygonLabel(d =>
+          `<div style="
+            background:#091722;
+            border:1px solid #ff8a24;
+            padding:8px 10px;
+            border-radius:7px;
+            color:white;
+            font:12px Arial
+          ">
+            <b>${d.properties.id}</b><br>
+            ${d.properties.region} · $${d.properties.price}
+          </div>`
+        )
+        .onPolygonClick(d => selectParcel(d));
+
+      function resizeGlobe() {
+        const el = document.getElementById("globeViz");
+
+        globe
+          .width(el.clientWidth)
+          .height(el.clientHeight);
+      }
+
+      resizeGlobe();
+      window.addEventListener("resize", resizeGlobe);
+
+      globe.pointOfView({
+        lat: 20,
+        lng: 5,
+        altitude: 2.15
+      }, 0);
+
+      statusEl.textContent = "در حال دریافت مرز خشکی‌های زمین...";
+
+      const response = await fetch(
+        "https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json"
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "دریافت اطلاعات خشکی‌ها ناموفق بود: " + response.status
+        );
+      }
+
+      const world = await response.json();
+
+      const land = topojson.feature(
+        world,
+        world.objects.land
+      );
+
+      /*
+        هر قطعه یک سلول شبکه‌ای است.
+        تنها سلول‌هایی پذیرفته می‌شوند که مرکز و چهار گوشه‌شان
+        داخل خشکی باشند. این روش تقریبی است و مرز ساحل را
+        به دقت نقشه‌برداری نمایش نمی‌دهد.
+      */
+
+      const step = 1.4;
+      const maxParcels = 18000;
+      const generated = [];
+
+      let idNumber = 1;
+
+      for (let lat = -55; lat < 78; lat += step) {
+        for (let lon = -180; lon < 180; lon += step) {
+          const west = lon;
+          const east = Math.min(180, lon + step);
+
+          const south = lat;
+          const north = Math.min(85, lat + step);
+
+          const centerLat = (south + north) / 2;
+          const centerLon = (west + east) / 2;
+
+          const points = [
+            [centerLon, centerLat],
+            [west, south],
+            [east, south],
+            [east, north],
+            [west, north]
+          ];
+
+          const completelyOnLand = points.every(point =>
+            d3.geoContains(land, point)
+          );
+
+          if (!completelyOnLand) continue;
+
+          const id =
+            "EG-" + String(idNumber).padStart(6, "0");
+
+          generated.push(
+            makeParcel(
+              west,
+              south,
+              east,
+              north,
+              id,
+              centerLat,
+              centerLon
+            )
+          );
+
+          idNumber++;
+
+          if (generated.length >= maxParcels) break;
+        }
+
+        if (generated.length >= maxParcels) break;
+      }
+
+      parcels = generated;
+
+      globe.polygonsData(parcels);
+
+      countEl.textContent =
+        parcels.length.toLocaleString();
+
+      statusEl.textContent =
+        "کره آماده است. " +
+        parcels.length.toLocaleString() +
+        " قطعه تقریبی بارگذاری شد. برای چرخاندن بکش و برای بزرگ‌نمایی از اسکرول یا لمس استفاده کن.";
+
+      globe.controls().autoRotate = false;
+      globe.controls().enableDamping = true;
+      globe.controls().dampingFactor = 0.08;
+
+    } catch (error) {
+      console.error(error);
+
+      statusEl.innerHTML =
+        '<span class="error">خطا در بارگذاری: ' +
+        String(error.message || error) +
+        "</span>";
+    }
+  }
+
+  document.getElementById("searchBtn").addEventListener(
+    "click",
+    () => {
+      const id = document
+        .getElementById("searchId")
+        .value.trim()
+        .toUpperCase();
+
+      if (!id) {
+        searchMessage.textContent =
+          "ابتدا شناسه قطعه را وارد کن.";
+        return;
+      }
+
+      const match = parcels.find(
+        p => p.properties.id.toUpperCase() === id
+      );
+
+      if (match) {
+        selectParcel(match);
+
+        searchMessage.textContent =
+          "قطعه پیدا شد و انتخاب شد.";
+      } else {
+        searchMessage.textContent =
+          "این شناسه در شبکه فعلی قطعات پیدا نشد.";
+      }
+    }
+  );
+
+  document.getElementById("searchId").addEventListener(
+    "keydown",
+    event => {
+      if (event.key === "Enter") {
+        document.getElementById("searchBtn").click();
+      }
+    }
+  );
+
+  document.getElementById("resetBtn").addEventListener(
+    "click",
+    () => {
+      if (globe) {
+        globe.pointOfView({
+          lat: 20,
+          lng: 5,
+          altitude: 2.15
+        }, 900);
+
+        globe.polygonCapColor(
+          () => "rgba(255,138,36,0.035)"
+        );
+      }
+
+      selectedParcel = null;
+
+      selectedIdEl.textContent =
+        "هنوز قطعه‌ای انتخاب نشده";
+
+      selectedPriceEl.textContent = "—";
+
+      selectedRegionEl.textContent =
+        "برای انتخاب قطعه، روی یکی از قطعات کره بزن.";
+
+      latEl.textContent = "—";
+      lonEl.textContent = "—";
+
+      document.getElementById("searchId").value = "";
+      searchMessage.textContent = "";
+    }
+  );
+
+  initializeGlobe();
 })();
 </script>
 </body>
