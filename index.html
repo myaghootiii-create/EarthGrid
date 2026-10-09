@@ -1,237 +1,167 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EarthGrid | Digital Land Parcels</title>
+<title>EarthGrid | Digital Land</title>
 
 <style>
-:root {
-  --bg: #050b16;
-  --panel: #0b1729;
-  --orange: #ff8a24;
-  --gold: #ffd166;
-  --text: #f4f7ff;
-  --muted: #a2b3ca;
+* {
+  box-sizing: border-box;
 }
-
-* { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
+  background: #05080d;
+  color: #f4f4f4;
   font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
 header {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 17px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 22px;
-  border-bottom: 1px solid #24344a;
-  direction: ltr;
+  background: linear-gradient(#05080ddd, transparent);
+  pointer-events: none;
 }
 
 .logo {
-  font-size: 25px;
+  font-size: 23px;
   font-weight: bold;
   letter-spacing: 2px;
 }
 
-.logo span { color: var(--orange); }
-
-header small { color: var(--muted); }
-
-main {
-  max-width: 1400px;
-  margin: auto;
-  padding: 18px;
+.logo span {
+  color: #ff8a24;
 }
 
-.hero {
-  text-align: center;
-  padding: 10px 0 20px;
+.status {
+  color: #ffb36c;
+  font-size: 11px;
+  letter-spacing: 1px;
 }
 
-.hero h1 {
-  font-size: clamp(26px, 4vw, 42px);
-  margin: 8px 0;
-}
-
-.hero p {
-  color: var(--muted);
-  line-height: 1.8;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr);
-  gap: 16px;
-  direction: ltr;
-}
-
-.globeBox, .panel {
-  background: var(--panel);
-  border: 1px solid #23364e;
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-.globeBox {
-  position: relative;
-  min-height: 470px;
-}
-
-#globe {
-  display: block;
-  width: 100%;
-  height: 470px;
-  touch-action: none;
-  cursor: grab;
-}
-
-#globe:active { cursor: grabbing; }
-
-.hint {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  right: 12px;
-  text-align: center;
-  font-size: 12px;
-  color: #fff;
-  background: #07111ddd;
-  padding: 10px;
-  border-radius: 8px;
-  pointer-events: none;
+#globeViz {
+  width: 100vw;
+  height: 100dvh;
 }
 
 .panel {
-  padding: 20px;
-  direction: rtl;
-  text-align: right;
-}
-
-.pill {
-  display: inline-block;
-  padding: 6px 10px;
-  border-radius: 20px;
-  background: #38291b;
-  color: #ffbd76;
-  font-size: 12px;
+  position: absolute;
+  z-index: 5;
+  left: 15px;
+  bottom: 18px;
+  width: min(340px, calc(100vw - 30px));
+  padding: 17px;
+  background: rgba(10, 15, 23, 0.94);
+  border: 1px solid #ff8a2455;
+  border-radius: 14px;
+  box-shadow: 0 8px 35px #0008;
 }
 
 .panel h2 {
-  font-size: 19px;
-  margin: 14px 0;
+  margin: 0 0 7px;
+  font-size: 17px;
 }
 
-.parcelId {
-  font-size: 25px;
-  font-weight: bold;
-  color: var(--orange);
-  margin: 14px 0;
-  direction: ltr;
-  text-align: right;
-}
-
-.muted {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.8;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.stat {
-  background: #101f33;
-  padding: 12px;
-  border-radius: 10px;
-  min-width: 0;
-}
-
-.stat span {
-  display: block;
+.panel p {
+  color: #aab3c0;
   font-size: 12px;
-  color: var(--muted);
+  line-height: 1.6;
 }
 
-.stat strong {
-  display: block;
-  margin-top: 7px;
-  overflow-wrap: anywhere;
-  direction: ltr;
-  text-align: right;
-}
-
-hr {
-  border: 0;
-  border-top: 1px solid #26364c;
-  margin: 20px 0;
-}
-
-input, button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
+.search {
+  display: flex;
+  gap: 7px;
+  margin-top: 13px;
 }
 
 input {
-  background: #07111f;
+  min-width: 0;
+  flex: 1;
+  padding: 12px;
   color: white;
-  border: 1px solid #32455d;
-  direction: ltr;
-  text-align: left;
+  background: #151d29;
+  border: 1px solid #354152;
+  border-radius: 8px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #ff8a24;
 }
 
 button {
-  margin-top: 9px;
+  padding: 11px 13px;
+  color: #15100a;
+  background: #ff8a24;
   border: 0;
-  background: var(--orange);
-  color: #17110a;
+  border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
 }
 
-button.secondary {
-  background: #172941;
-  color: white;
-  border: 1px solid #32455d;
+button:active {
+  transform: scale(.97);
 }
 
-.notice {
-  font-size: 12px;
-  color: #91a5bd;
+#result {
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid #303947;
+  font-size: 13px;
   line-height: 1.8;
-  margin-top: 18px;
+  overflow-wrap: anywhere;
+}
+
+.price {
+  color: #ffae61;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.hint {
+  color: #8e9bab;
+  font-size: 11px;
+  margin-top: 10px;
 }
 
 #message {
-  margin-top: 10px;
-  color: #ffbd76;
+  color: #ffb36c;
   font-size: 12px;
-  line-height: 1.8;
+  margin-top: 9px;
 }
 
-footer {
-  text-align: center;
-  color: #71839c;
-  padding: 24px;
-  font-size: 12px;
-}
+@media (max-width: 500px) {
+  .logo {
+    font-size: 19px;
+  }
 
-@media (max-width: 760px) {
-  .layout { grid-template-columns: 1fr; }
-  .globeBox { min-height: 360px; }
-  #globe { height: 360px; }
-  header small { font-size: 10px; }
+  header {
+    padding: 14px;
+  }
+
+  .panel {
+    bottom: 12px;
+    left: 10px;
+    width: calc(100vw - 20px);
+    padding: 13px;
+  }
+
+  .panel h2 {
+    font-size: 15px;
+  }
+
+  .panel p {
+    margin: 6px 0;
+  }
 }
 </style>
 </head>
@@ -240,684 +170,74 @@ footer {
 
 <header>
   <div class="logo">EARTH<span>GRID</span></div>
-  <small>EXPLORE · SELECT · COLLECT</small>
+  <div class="status">3D DIGITAL LAND</div>
 </header>
 
-<main>
+<div id="globeViz"></div>
 
-<section class="hero">
-  <h1>Explore. Discover. Collect.</h1>
+<section class="panel">
+  <h2>Explore the Earth</h2>
+
   <p>
-    زمین را بچرخان، قطعات دیجیتال روی خشکی‌ها را انتخاب کن
-    و اطلاعات هر قطعه را ببین.
+    Select an orange parcel on the globe to view its
+    identification number and demo price.
   </p>
-</section>
 
-<div class="layout">
-
-  <div class="globeBox">
-    <canvas id="globe"></canvas>
-    <div class="hint">
-      برای چرخاندن بکش · برای بزرگ‌نمایی اسکرول کن ·
-      برای انتخاب روی خشکی بزن
-    </div>
+  <div class="search">
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Enter parcel ID, e.g. EG-1001"
+      autocomplete="off"
+    >
+    <button id="searchButton">Search</button>
   </div>
 
-  <section class="panel">
+  <div id="result">
+    Select a parcel to see its details.
+  </div>
 
-    <span class="pill">DIGITAL LAND DEMO</span>
+  <div id="message"></div>
 
-    <h2>قطعه انتخاب‌شده</h2>
+  <div class="hint">
+    Demo only · Prices are illustrative · No legal ownership
+  </div>
+</section>
 
-    <div class="parcelId" id="parcelId">EG-000000</div>
-
-    <div class="muted" id="region">
-      برای انتخاب قطعه روی یکی از خشکی‌های کره بزن.
-    </div>
-
-    <div class="stats">
-      <div class="stat">
-        <span>عرض جغرافیایی</span>
-        <strong id="lat">—</strong>
-      </div>
-
-      <div class="stat">
-        <span>طول جغرافیایی</span>
-        <strong id="lon">—</strong>
-      </div>
-
-      <div class="stat">
-        <span>قیمت نمایشی</span>
-        <strong id="price">—</strong>
-      </div>
-
-      <div class="stat">
-        <span>اندازه شبکه</span>
-        <strong>5° × 5°</strong>
-      </div>
-    </div>
-
-    <hr>
-
-    <h2>جست‌وجوی قطعه</h2>
-
-    <input id="search" placeholder="EG-000000">
-
-    <button id="searchBtn">جست‌وجو</button>
-    <button id="randomBtn" class="secondary">انتخاب یک قطعه تصادفی</button>
-    <button id="resetBtn" class="secondary">بازگشت به نمای اولیه</button>
-
-    <div id="message">
-      قطعات قابل انتخاب فقط نمونه‌های تقریبی روی خشکی‌ها هستند.
-    </div>
-
-    <hr>
-
-    <h2>وضعیت مالکیت</h2>
-
-    <div class="stats">
-      <div class="stat">
-        <span>وضعیت</span>
-        <strong>نمایشی</strong>
-      </div>
-
-      <div class="stat">
-        <span>تعداد قطعات نمونه</span>
-        <strong id="count">در حال محاسبه</strong>
-      </div>
-    </div>
-
-    <p class="notice">
-      این یک نمونه اولیه است. قیمت‌ها صرفاً نمایشی هستند.
-      انتخاب قطعه، مالکیت قانونی زمین واقعی ایجاد نمی‌کند.
-      ثبت‌نام، پرداخت و انتقال مالکیت هنوز فعال نیستند.
-    </p>
-
-  </section>
-</div>
-</main>
-
-<footer>EARTHGRID © 2026 · DIGITAL PARCEL PROTOTYPE</footer>
+<script src="https://unpkg.com/globe.gl"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 
 <script>
 (() => {
-"use strict";
+  const result = document.getElementById("result");
+  const message = document.getElementById("message");
+  const searchInput = document.getElementById("searchInput");
+  const searchButton = document.getElementById("searchButton");
 
-const canvas = document.getElementById("globe");
-const ctx = canvas.getContext("2d");
+  let globe;
+  let parcels = [];
+  let selectedParcel = null;
 
-const $ = id => document.getElementById(id);
-const rad = d => d * Math.PI / 180;
-const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
-let yaw = -0.45;
-let pitch = 0.15;
-let zoom = 1;
-let dragging = false;
-let moved = false;
-let px = 0, py = 0, startX = 0, startY = 0;
-let selected = null;
-let stars = [];
-
-const STEP = 5;
-const TAU = Math.PI * 2;
-
-/*
-  قاره‌ها به‌صورت چندضلعی‌های تقریبی تعریف شده‌اند.
-  این شکل‌ها برای نمایش نمونه اولیه‌اند و نقشه دقیق ساحلی نیستند.
-  فرمت هر نقطه: [طول جغرافیایی، عرض جغرافیایی]
-*/
-const continents = [
-  [
-    [-168,70],[-150,72],[-130,65],[-115,55],
-    [-100,50],[-85,25],[-80,10],[-98,7],
-    [-110,25],[-125,45],[-150,58]
-  ],
-  [
-    [-81,12],[-70,8],[-60,-5],[-48,-20],
-    [-40,-38],[-55,-56],[-72,-35],[-78,-10]
-  ],
-  [
-    [-18,35],[0,38],[20,33],[35,15],
-    [50,-10],[35,-35],[15,-35],[0,-20],
-    [-10,5]
-  ],
-  [
-    [-10,70],[15,72],[40,65],[65,58],
-    [95,55],[125,60],[155,55],[175,45],
-    [155,25],[130,8],[110,-5],[90,8],
-    [70,20],[55,35],[35,40],[20,55],[0,60]
-  ],
-  [
-    [110,-10],[130,-10],[153,-20],[150,-40],
-    [130,-45],[115,-35]
-  ],
-  [
-    [-52,82],[-25,78],[-20,65],[-40,58],[-55,68]
-  ],
-  [
-    [45,-13],[51,-17],[50,-25],[44,-22]
-  ],
-  [
-    [95,5],[110,5],[120,-5],[115,-10],[105,-7]
-  ],
-  [
-    [125,-3],[140,-5],[150,-10],[145,-18],[132,-12]
-  ],
-  [
-    [47,-13],[50,-20],[46,-25],[43,-18]
-  ],
-  [
-    [-180,-75],[-120,-75],[-60,-75],[0,-75],
-    [60,-75],[120,-75],[180,-75],[180,-88],
-    [-180,-88]
-  ]
-];
-
-function pointInPolygon(lon, lat, polygon) {
-  let inside = false;
-
-  for (let i = 0, j = polygon.length - 1;
-       i < polygon.length;
-       j = i++) {
-
-    const xi = polygon[i][0], yi = polygon[i][1];
-    const xj = polygon[j][0], yj = polygon[j][1];
-
-    const crosses =
-      ((yi > lat) !== (yj > lat)) &&
-      (lon < (xj - xi) * (lat - yi) /
-      ((yj - yi) || 0.000001) + xi);
-
-    if (crosses) inside = !inside;
+  function parcelId(index) {
+    return "EG-" + (1001 + index);
   }
 
-  return inside;
-}
+  function parcelPrice(lat, lon) {
+    const value = Math.abs(
+      Math.round(
+        (lat + 90) * 173 +
+        (lon + 180) * 97
+      )
+    );
 
-function isLand(lat, lon) {
-  if (lat < -90 || lat > 90) return false;
-
-  // نگاشت ساده طول جغرافیایی برای کنترل عبور از نصف‌النهار ۱۸۰
-  const normalizedLon = ((lon + 180) % 360 + 360) % 360 - 180;
-
-  return continents.some(poly =>
-    pointInPolygon(normalizedLon, lat, poly)
-  );
-}
-
-function getParcel(lat, lon) {
-  const latIndex = Math.floor((lat + 90) / STEP);
-  const lonIndex = Math.floor((lon + 180) / STEP);
-
-  const south = -90 + latIndex * STEP;
-  const west = -180 + lonIndex * STEP;
-  const centerLat = south + STEP / 2;
-  const centerLon = west + STEP / 2;
-
-  return {
-    id: "EG-" +
-      String(latIndex).padStart(2, "0") + "-" +
-      String(lonIndex).padStart(2, "0"),
-    lat: centerLat,
-    lon: centerLon,
-    south,
-    north: south + STEP,
-    west,
-    east: west + STEP
-  };
-}
-
-function getPrice(lat, lon) {
-  if (lat > 66 || lat < -60) return 1;
-  if (lon >= -168 && lon < -30 && lat > 7) return 10;
-  if (lon >= -82 && lon < -34 && lat <= 7) return 3;
-  if (lon >= -20 && lon < 52 && lat > -36 && lat < 38) return 2;
-  if (lon >= -12 && lon < 45 && lat >= 35) return 5;
-  if (lon >= 45 && lat > -10) return 1;
-  if (lon >= 110 && lat < 0) return 4;
-  return 2;
-}
-
-function rotatePoint(lat, lon) {
-  const a = rad(lon);
-  const b = rad(lat);
-
-  const x = Math.cos(b) * Math.sin(a);
-  const y = Math.sin(b);
-  const z = Math.cos(b) * Math.cos(a);
-
-  const x1 = x * Math.cos(yaw) - z * Math.sin(yaw);
-  const z1 = x * Math.sin(yaw) + z * Math.cos(yaw);
-
-  const y2 = y * Math.cos(pitch) - z1 * Math.sin(pitch);
-  const z2 = y * Math.sin(pitch) + z1 * Math.cos(pitch);
-
-  return {x:x1, y:y2, z:z2};
-}
-
-function project(lat, lon) {
-  const p = rotatePoint(lat, lon);
-  const size = Math.min(canvas.clientWidth, canvas.clientHeight) * 0.39 * zoom;
-
-  return {
-    x: canvas.clientWidth / 2 + p.x * size,
-    y: canvas.clientHeight / 2 - p.y * size,
-    z: p.z,
-    r: size
-  };
-}
-
-function resize() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-  canvas.width = Math.round(canvas.clientWidth * dpr);
-  canvas.height = Math.round(canvas.clientHeight * dpr);
-
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  stars = [];
-
-  for (let i = 0; i < 100; i++) {
-    stars.push({
-      x: Math.random() * canvas.clientWidth,
-      y: Math.random() * canvas.clientHeight,
-      r: Math.random() * 1.2 + 0.2
-    });
+    return 100 + (value % 4900);
   }
 
-  draw();
-}
+  function showParcel(parcel) {
+    if (!parcel) return;
 
-function drawStars(w, h) {
-  for (const s of stars) {
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, TAU);
-    ctx.fillStyle = "rgba(180,210,240,0.5)";
-    ctx.fill();
-  }
-}
+    selectedParcel = parcel;
 
-function drawGridLine(points, color, width) {
-  ctx.beginPath();
-  let started = false;
-
-  for (const pt of points) {
-    const p = project(pt.lat, pt.lon);
-
-    if (p.z <= 0) {
-      started = false;
-      continue;
-    }
-
-    if (!started) {
-      ctx.moveTo(p.x, p.y);
-      started = true;
-    } else {
-      ctx.lineTo(p.x, p.y);
-    }
-  }
-
-  ctx.strokeStyle = color;
-  ctx.lineWidth = width;
-  ctx.stroke();
-}
-
-/*
-  خطوط شبکه فقط در نقاطی رسم می‌شوند که در محدوده تقریبی خشکی باشند.
-  این روش برای نمونه اولیه است؛ در سواحل ممکن است خطا داشته باشد.
-*/
-function drawLandGrid() {
-  const orange = "rgba(255,138,36,0.95)";
-  const lineWidth = zoom > 1.5 ? 1.5 : 1.1;
-
-  // مرزهای افقی
-  for (let lat = -85; lat <= 80; lat += STEP) {
-    const points = [];
-
-    for (let lon = -180; lon <= 180; lon += 1) {
-      if (isLand(lat + 0.15, lon)) {
-        points.push({lat, lon});
-      } else {
-        if (points.length > 1) {
-          drawGridLine(points, orange, lineWidth);
-        }
-        points.length = 0;
-      }
-    }
-
-    if (points.length > 1) {
-      drawGridLine(points, orange, lineWidth);
-    }
-  }
-
-  // مرزهای عمودی
-  for (let lon = -180; lon < 180; lon += STEP) {
-    let segment = [];
-
-    for (let lat = -85; lat <= 85; lat += 1) {
-      if (isLand(lat, lon + 0.15)) {
-        segment.push({lat, lon});
-      } else {
-        if (segment.length > 1) {
-          drawGridLine(segment, orange, lineWidth);
-        }
-        segment = [];
-      }
-    }
-
-    if (segment.length > 1) {
-      drawGridLine(segment, orange, lineWidth);
-    }
-  }
-}
-
-function drawContinents() {
-  for (const poly of continents) {
-    ctx.beginPath();
-    let started = false;
-
-    for (const point of poly) {
-      const p = project(point[1], point[0]);
-
-      if (p.z <= 0) {
-        started = false;
-        continue;
-      }
-
-      if (!started) {
-        ctx.moveTo(p.x, p.y);
-        started = true;
-      } else {
-        ctx.lineTo(p.x, p.y);
-      }
-    }
-
-    ctx.closePath();
-    ctx.fillStyle = "#286b62";
-    ctx.fill();
-
-    ctx.strokeStyle = "rgba(127,221,181,0.5)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-}
-
-function drawSelected() {
-  if (!selected) return;
-
-  const corners = [
-    [selected.south, selected.west],
-    [selected.south, selected.east],
-    [selected.north, selected.east],
-    [selected.north, selected.west],
-    [selected.south, selected.west]
-  ];
-
-  ctx.beginPath();
-  let started = false;
-
-  for (const [lat, lon] of corners) {
-    const p = project(lat, lon);
-
-    if (p.z <= 0) {
-      started = false;
-      continue;
-    }
-
-    if (!started) {
-      ctx.moveTo(p.x, p.y);
-      started = true;
-    } else {
-      ctx.lineTo(p.x, p.y);
-    }
-  }
-
-  ctx.closePath();
-  ctx.fillStyle = "rgba(255,138,36,0.35)";
-  ctx.fill();
-
-  ctx.strokeStyle = "#ffd166";
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  const center = project(selected.lat, selected.lon);
-
-  if (center.z > 0) {
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, 5, 0, TAU);
-    ctx.fillStyle = "#ffd166";
-    ctx.shadowColor = "#ffd166";
-    ctx.shadowBlur = 14;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  }
-}
-
-function draw() {
-  if (!ctx) return;
-
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
-
-  ctx.clearRect(0, 0, w, h);
-
-  const bg = ctx.createRadialGradient(w/2, h/2, 5, w/2, h/2, Math.max(w,h)*0.7);
-  bg.addColorStop(0, "#10233a");
-  bg.addColorStop(1, "#07111f");
-
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, w, h);
-
-  drawStars(w, h);
-
-  const center = project(0, 0);
-  const R = center.r;
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(w/2, h/2, R, 0, TAU);
-  ctx.clip();
-
-  const ocean = ctx.createRadialGradient(w/2-R*0.3, h/2-R*0.4, 1, w/2, h/2, R);
-  ocean.addColorStop(0, "#24749a");
-  ocean.addColorStop(0.65, "#105071");
-  ocean.addColorStop(1, "#071e39");
-
-  ctx.fillStyle = ocean;
-  ctx.fillRect(w/2-R, h/2-R, 2*R, 2*R);
-
-  drawContinents();
-  drawLandGrid();
-  drawSelected();
-
-  ctx.restore();
-
-  ctx.beginPath();
-  ctx.arc(w/2, h/2, R, 0, TAU);
-  ctx.strokeStyle = "rgba(110,224,215,0.65)";
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-}
-
-function updateInfo(parcel) {
-  selected = parcel;
-
-  $("parcelId").textContent = parcel.id;
-  $("lat").textContent = parcel.lat.toFixed(2) + "°";
-  $("lon").textContent = parcel.lon.toFixed(2) + "°";
-  $("price").textContent = "$" + getPrice(parcel.lat, parcel.lon).toFixed(2);
-  $("region").textContent = "قطعه دیجیتال تقریبی · مرز شبکه ۵ درجه‌ای";
-  $("message").textContent = "قطعه انتخاب شد: " + parcel.id;
-
-  draw();
-}
-
-function pointToGeo(clientX, clientY) {
-  const rect = canvas.getBoundingClientRect();
-
-  const x = clientX - rect.left - canvas.clientWidth/2;
-  const y = canvas.clientHeight/2 - (clientY - rect.top);
-  const R = Math.min(canvas.clientWidth, canvas.clientHeight) * 0.39 * zoom;
-
-  const nx = x/R;
-  const ny = y/R;
-  const d = nx*nx + ny*ny;
-
-  if (d > 1) return null;
-
-  const z = Math.sqrt(1-d);
-
-  const y1 = ny*Math.cos(pitch) + z*Math.sin(pitch);
-  const z1 = -ny*Math.sin(pitch) + z*Math.cos(pitch);
-
-  const x2 = nx*Math.cos(yaw) + z1*Math.sin(yaw);
-  const z2 = -nx*Math.sin(yaw) + z1*Math.cos(yaw);
-
-  return {
-    lat: Math.asin(clamp(y1,-1,1))*180/Math.PI,
-    lon: Math.atan2(x2,z2)*180/Math.PI
-  };
-}
-
-function selectAt(lat, lon) {
-  if (!isLand(lat, lon)) {
-    $("message").textContent = "این نقطه در اقیانوس یا خارج از خشکی‌های تعریف‌شده است. روی یک خشکی بزن.";
-    return false;
-  }
-
-  const parcel = getParcel(lat, lon);
-
-  if (!isLand(parcel.lat, parcel.lon)) {
-    $("message").textContent = "مرکز این قطعه در خشکی تشخیص داده نشد. نقطه دیگری روی خشکی انتخاب کن.";
-    return false;
-  }
-
-  updateInfo(parcel);
-  return true;
-}
-
-canvas.addEventListener("pointerdown", e => {
-  dragging = true;
-  moved = false;
-  px = startX = e.clientX;
-  py = startY = e.clientY;
-  canvas.setPointerCapture(e.pointerId);
-});
-
-canvas.addEventListener("pointermove", e => {
-  if (!dragging) return;
-
-  const dx = e.clientX - px;
-  const dy = e.clientY - py;
-
-  if (Math.abs(e.clientX-startX) + Math.abs(e.clientY-startY) > 4) {
-    moved = true;
-  }
-
-  yaw += dx * 0.008;
-  pitch = clamp(pitch + dy * 0.008, -1.4, 1.4);
-
-  px = e.clientX;
-  py = e.clientY;
-
-  draw();
-});
-
-canvas.addEventListener("pointerup", e => {
-  dragging = false;
-
-  if (!moved) {
-    const p = pointToGeo(e.clientX, e.clientY);
-    if (p) selectAt(p.lat, p.lon);
-  }
-});
-
-canvas.addEventListener("pointercancel", () => dragging = false);
-
-canvas.addEventListener("wheel", e => {
-  e.preventDefault();
-  zoom = clamp(zoom - e.deltaY * 0.001, 0.7, 2.5);
-  draw();
-}, {passive:false});
-
-$("searchBtn").addEventListener("click", () => {
-  const id = $("search").value.trim().toUpperCase();
-
-  if (!/^EG-\d{2}-\d{2}$/.test(id)) {
-    $("message").textContent = "شناسه را با قالب EG-00-00 وارد کن.";
-    return;
-  }
-
-  const parts = id.split("-");
-  const latIndex = Number(parts[1]);
-  const lonIndex = Number(parts[2]);
-
-  const lat = -90 + latIndex*STEP + STEP/2;
-  const lon = -180 + lonIndex*STEP + STEP/2;
-
-  if (latIndex < 0 || latIndex >= 36 || lonIndex < 0 || lonIndex >= 72 || !isLand(lat,lon)) {
-    $("message").textContent = "این شناسه به یک قطعه خشکی در شبکه فعلی تعلق ندارد.";
-    return;
-  }
-
-  selected = getParcel(lat,lon);
-  yaw = -rad(lon);
-  pitch = rad(lat) * 0.2;
-
-  updateInfo(selected);
-});
-
-$("randomBtn").addEventListener("click", () => {
-  for (let i=0; i<1000; i++) {
-    const lat = Math.random()*130 - 50;
-    const lon = Math.random()*360 - 180;
-
-    if (selectAt(lat,lon)) {
-      yaw = -rad(lon);
-      draw();
-      return;
-    }
-  }
-
-  $("message").textContent = "قطعه تصادفی پیدا نشد؛ دوباره تلاش کن.";
-});
-
-$("resetBtn").addEventListener("click", () => {
-  yaw = -0.45;
-  pitch = 0.15;
-  zoom = 1;
-  selected = null;
-
-  $("parcelId").textContent = "EG-000000";
-  $("lat").textContent = "—";
-  $("lon").textContent = "—";
-  $("price").textContent = "—";
-  $("region").textContent = "برای انتخاب قطعه روی یکی از خشکی‌ها بزن.";
-  $("message").textContent = "نمای اولیه بازگردانده شد.";
-
-  draw();
-});
-
-function countApproximateParcels() {
-  let count = 0;
-
-  for (let lat = -85; lat < 85; lat += STEP) {
-    for (let lon = -177.5; lon < 180; lon += STEP) {
-      if (isLand(lat + STEP/2, lon)) count++;
-    }
-  }
-
-  $("count").textContent = count.toLocaleString();
-}
-
-window.addEventListener("resize", resize);
-
-resize();
-countApproximateParcels();
-
-})();
-</script>
-
-</body>
-</html>
+    result.innerHTML = `
+      <div>
