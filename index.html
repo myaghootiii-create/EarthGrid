@@ -304,6 +304,7 @@ button.primary{background:#ff8a24;color:#17100a;border:0}
 
     globe.polygonsData(visible);
     setText("count", visible.length.toLocaleString("en-US"));
+    console.log("EarthGrid parcels:", visible.length, visible[0]);
     setText("status", "EarthGrid is ready.");
 
     el("find").addEventListener("click", () => {
