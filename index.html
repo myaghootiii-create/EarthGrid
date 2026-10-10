@@ -132,7 +132,24 @@ button.primary{background:#ff8a24;color:#17100a;border:0}
    document.getElementById("search").value=p.id;
  }
 
- function makePolygon(lat, lon, size, id) {
+
+function makePolygon(lat,lon,size,id){
+  const h=size/2;
+  return {
+    id:id,
+    lat:lat,
+    lon:lon,
+    price:priceFor(lat,lon),
+    owner:null,
+    polygon:[
+      [lat-h,lon-h],
+      [lat-h,lon+h],
+      [lat+h,lon+h],
+      [lat+h,lon-h]
+    ]
+  };
+}
+
   const h = size / 2;
 
   return {
