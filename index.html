@@ -4,13 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EarthGrid | Digital Land Explorer</title>
+  <title>EarthGrid - 3D Land Explorer</title>
 
   <style>
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
+      overflow: hidden;
       font-family: Tahoma, Arial, sans-serif;
       color: #fff;
       background: #07111e;
@@ -29,13 +30,13 @@
       padding: 12px 16px;
       border: 1px solid #805a2c;
       border-radius: 12px;
-      background: #07111eea;
+      background: #07111eee;
     }
 
     .brand h1 {
       margin: 0;
       color: #ffb347;
-      font-size: 22px;
+      font-size: 23px;
     }
 
     .brand p {
@@ -49,9 +50,11 @@
       z-index: 2;
       top: 100px;
       right: 12px;
-      width: 290px;
+      width: 285px;
       max-width: calc(100vw - 24px);
-      padding: 16px;
+      max-height: calc(100vh - 165px);
+      overflow-y: auto;
+      padding: 15px;
       border: 1px solid #805a2c;
       border-radius: 14px;
       background: #07111ef2;
@@ -64,10 +67,12 @@
     }
 
     input, button {
+      display: block;
       width: 100%;
       padding: 11px;
-      margin-bottom: 8px;
+      margin-bottom: 9px;
       border-radius: 8px;
+      font-family: inherit;
       font-size: 13px;
     }
 
@@ -75,6 +80,8 @@
       color: white;
       background: #102236;
       border: 1px solid #53677d;
+      direction: ltr;
+      text-align: left;
     }
 
     button {
@@ -91,7 +98,7 @@
     }
 
     .info {
-      margin-top: 10px;
+      margin-top: 12px;
       border-top: 1px solid #34485b;
       padding-top: 8px;
     }
@@ -105,22 +112,34 @@
       font-size: 12px;
     }
 
-    .item span:first-child { color: #aebed0; }
-    .item span:last-child { overflow-wrap: anywhere; }
+    .item span:first-child {
+      color: #aebed0;
+      flex-shrink: 0;
+    }
 
-    #price { color: #ffb347; font-weight: bold; }
+    .item span:last-child {
+      direction: ltr;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    #price {
+      color: #ffb347;
+      font-weight: bold;
+    }
 
     #status {
       position: fixed;
       z-index: 3;
-      bottom: 12px;
-      left: 12px;
-      right: 12px;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
       padding: 10px;
+      border: 1px solid #34485b;
       border-radius: 8px;
-      background: #07111eea;
+      background: #07111eee;
       color: #d4dfeb;
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1.8;
       text-align: center;
     }
@@ -139,16 +158,34 @@
       line-height: 2;
     }
 
+    #loadingText {
+      color: #d4dfeb;
+      font-size: 13px;
+    }
+
     @media (max-width: 600px) {
-      .brand { top: 8px; left: 8px; }
-      .brand h1 { font-size: 18px; }
+      .brand {
+        top: 8px;
+        left: 8px;
+        padding: 9px 12px;
+      }
+
+      .brand h1 { font-size: 19px; }
+
       .panel {
-        top: 88px;
+        top: 85px;
         right: 8px;
-        width: 240px;
+        width: 245px;
+        max-height: calc(100vh - 145px);
         padding: 12px;
       }
-      #status { font-size: 10px; }
+
+      #status {
+        bottom: 5px;
+        left: 5px;
+        right: 5px;
+        font-size: 10px;
+      }
     }
   </style>
 </head>
@@ -156,53 +193,61 @@
 <body>
   <div id="globe"></div>
 
-  <div class="brand">
+  <header class="brand">
     <h1>EarthGrid</h1>
     <p>کاوشگر سه‌بعدی قطعات زمین</p>
-  </div>
+  </header>
 
   <section class="panel">
     <h2>جست‌وجوی قطعه</h2>
 
-    <input id="search" placeholder="مثلاً EG-1001">
-    <button id="searchBtn">جست‌وجو</button>
+    <input id="search" placeholder="EG-1001" autocomplete="off">
+    <button id="searchBtn">جست‌وجوی شناسه</button>
     <button id="resetBtn" class="secondary">نمای اولیه کره</button>
 
     <div class="info">
       <div class="item">
-        <span>شناسه</span>
+        <span>شناسه قطعه</span>
         <span id="parcelId">انتخاب نشده</span>
       </div>
+
       <div class="item">
         <span>عرض جغرافیایی</span>
         <span id="latitude">—</span>
       </div>
+
       <div class="item">
         <span>طول جغرافیایی</span>
         <span id="longitude">—</span>
       </div>
+
+      <div class="item">
+        <span>مساحت تقریبی</span>
+        <span id="area">—</span>
+      </div>
+
       <div class="item">
         <span>قیمت آزمایشی</span>
         <span id="price">—</span>
       </div>
     </div>
 
-    <p style="font-size:11px;color:#bdc9d8;line-height:1.9">
-      روی خانه‌های نارنجی کلیک کن. قیمت‌ها و قطعات این نسخه آزمایشی‌اند و مالکیت قانونی زمین را نشان نمی‌دهند.
+    <p style="font-size:11px;color:#bdc9d8;line-height:2">
+      روی قطعات شبکه کلیک کن تا اطلاعات آن‌ها نمایش داده شود.
+      این نسخه نمایشی است؛ قیمت‌ها، مرزها و شناسه‌ها واقعی یا قانونی نیستند.
     </p>
   </section>
 
   <div id="loading">
     <div>
       <h2>EarthGrid</h2>
-      <div id="loadingText">در حال بارگذاری کرهٔ زمین...</div>
+      <div id="loadingText">در حال بارگذاری کره زمین...</div>
     </div>
   </div>
 
   <div id="status">در حال آماده‌سازی...</div>
 
   <script src="https://unpkg.com/globe.gl"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-geo@3/dist/d3-geo.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 
   <script>
@@ -213,17 +258,97 @@
       const loadingText = document.getElementById("loadingText");
       const status = document.getElementById("status");
 
-      let globe;
+      let globe = null;
       let parcels = [];
 
-      function fail(message) {
+      function showError(message) {
         loadingText.textContent = message;
-        status.textContent = "بارگذاری ناموفق بود. اتصال اینترنت را بررسی کنید.";
+        status.textContent =
+          "خطا در بارگذاری. اتصال اینترنت یا کتابخانه‌ها را بررسی کنید.";
       }
 
-      function makeParcels(land) {
+      /*
+       * Point-in-ring:
+       * بررسی می‌کند یک نقطه داخل یک حلقه جغرافیایی هست یا نه.
+       * این تابع جایگزین وابستگی قبلی به d3.geoContains است.
+       */
+      function pointInRing(lon, lat, ring) {
+        let inside = false;
+
+        for (
+          let i = 0, j = ring.length - 1;
+          i < ring.length;
+          j = i++
+        ) {
+          const xi = ring[i][0];
+          const yi = ring[i][1];
+          const xj = ring[j][0];
+          const yj = ring[j][1];
+
+          const crosses =
+            (yi > lat) !== (yj > lat) &&
+            lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
+
+          if (crosses) {
+            inside = !inside;
+          }
+        }
+
+        return inside;
+      }
+
+      /*
+       * بررسی نقطه داخل خشکی:
+       * هم Polygon و هم MultiPolygon پشتیبانی می‌شوند.
+       */
+      function pointOnLand(land, lon, lat) {
+        const geometry = land.geometry || land;
+
+        if (!geometry || !geometry.coordinates) {
+          return false;
+        }
+
+        let polygons = [];
+
+        if (geometry.type === "Polygon") {
+          polygons = [geometry.coordinates];
+        } else if (geometry.type === "MultiPolygon") {
+          polygons = geometry.coordinates;
+        } else {
+          return false;
+        }
+
+        for (const polygon of polygons) {
+          if (!polygon.length || !polygon[0].length) {
+            continue;
+          }
+
+          if (!pointInRing(lon, lat, polygon[0])) {
+            continue;
+          }
+
+          let insideHole = false;
+
+          for (let h = 1; h < polygon.length; h++) {
+            if (pointInRing(lon, lat, polygon[h])) {
+              insideHole = true;
+              break;
+            }
+          }
+
+          if (!insideHole) {
+            return true;
+          }
+        }
+
+        return false;
+      }
+
+      function buildParcels(land) {
         const result = [];
         let number = 1001;
+
+        // اندازه هر خانه شبکه: 3 درجه جغرافیایی
         const step = 3;
 
         for (let lat = -54; lat < 75; lat += step) {
@@ -231,7 +356,7 @@
             const centerLat = lat + step / 2;
             const centerLon = lon + step / 2;
 
-            if (!d3.geoContains(land, [centerLon, centerLat])) {
+            if (!pointOnLand(land, centerLon, centerLat)) {
               continue;
             }
 
@@ -241,7 +366,8 @@
                 id: "EG-" + number,
                 lat: centerLat,
                 lon: centerLon,
-                price: 500 + ((number * 137) % 9500)
+                price: 500 + ((number * 137) % 9500),
+                area: step * step
               },
               geometry: {
                 type: "Polygon",
@@ -262,7 +388,7 @@
         return result;
       }
 
-      function selectParcel(parcel) {
+      function showParcel(parcel, moveGlobe) {
         if (!parcel) return;
 
         const p = parcel.properties;
@@ -272,29 +398,36 @@
           p.lat.toFixed(2) + "°";
         document.getElementById("longitude").textContent =
           p.lon.toFixed(2) + "°";
+        document.getElementById("area").textContent =
+          p.area + " درجه²";
         document.getElementById("price").textContent =
           p.price.toLocaleString("en-US") + " USD";
+
         document.getElementById("search").value = p.id;
 
-        globe.pointOfView({
-          lat: p.lat,
-          lng: p.lon,
-          altitude: 1.8
-        }, 900);
+        if (moveGlobe && globe) {
+          globe.pointOfView({
+            lat: p.lat,
+            lng: p.lon,
+            altitude: 1.8
+          }, 900);
+        }
       }
 
       try {
         loadingText.textContent = "در حال بررسی کتابخانه‌ها...";
 
         if (
-          typeof Globe !== "function" ||
-          typeof d3 === "undefined" ||
-          typeof topojson === "undefined"
+          typeof window.Globe !== "function" ||
+          typeof window.topojson === "undefined" ||
+          typeof window.topojson.feature !== "function"
         ) {
-          throw new Error("کتابخانه‌ها بارگذاری نشدند؛ اینترنت را بررسی کنید.");
+          throw new Error(
+            "کتابخانه کره یا نقشه بارگذاری نشده است. اینترنت را بررسی کنید."
+          );
         }
 
-        loadingText.textContent = "در حال دریافت نقشهٔ زمین...";
+        loadingText.textContent = "در حال دریافت نقشه خشکی‌های زمین...";
 
         const response = await fetch(
           "https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json"
@@ -305,17 +438,27 @@
         }
 
         const world = await response.json();
-        const land = topojson.feature(world, world.objects.land);
 
-        loadingText.textContent = "در حال ساخت قطعات و مرزها...";
-
-        parcels = makeParcels(land);
-
-        if (!parcels.length) {
-          throw new Error("قطعه‌ای ساخته نشد.");
+        if (!world.objects || !world.objects.land) {
+          throw new Error("اطلاعات خشکی‌های نقشه پیدا نشد.");
         }
 
-        globe = Globe()(document.getElementById("globe"))
+        const land = window.topojson.feature(
+          world,
+          world.objects.land
+        );
+
+        loadingText.textContent = "در حال ساخت شبکه قطعات خشکی...";
+
+        parcels = buildParcels(land);
+
+        if (parcels.length === 0) {
+          throw new Error("هیچ قطعه‌ای ساخته نشد.");
+        }
+
+        loadingText.textContent = "در حال نمایش کره سه‌بعدی...";
+
+        globe = window.Globe()(document.getElementById("globe"))
           .backgroundColor("#07111e")
           .globeImageUrl(
             "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
@@ -324,39 +467,42 @@
           .atmosphereColor("#4289bd")
           .atmosphereAltitude(0.15)
           .polygonsData(parcels)
-          .polygonCapColor(() => "rgba(255,165,50,0.08)")
+          .polygonCapColor(() => "rgba(255,165,50,0.10)")
           .polygonSideColor(() => "rgba(255,165,50,0.04)")
           .polygonStrokeColor(() => "#ffad42")
           .polygonAltitude(0.004)
           .polygonLabel(d => d.properties.id)
-          .onPolygonClick(d => selectParcel(d));
+          .onPolygonClick(d => showParcel(d, true));
 
         globe
           .width(window.innerWidth)
           .height(window.innerHeight)
-          .pointOfView({ lat: 20, lng: 10, altitude: 2.3 }, 0);
+          .pointOfView({
+            lat: 20,
+            lng: 10,
+            altitude: 2.3
+          }, 0);
 
-        function resize() {
+        window.addEventListener("resize", function () {
+          if (!globe) return;
           globe.width(window.innerWidth);
           globe.height(window.innerHeight);
-        }
-
-        window.addEventListener("resize", resize);
+        });
 
         document.getElementById("searchBtn").onclick = function () {
           const query = document.getElementById("search")
             .value.trim().toUpperCase();
 
           const parcel = parcels.find(
-            p => p.properties.id.toUpperCase() === query
+            item => item.properties.id.toUpperCase() === query
           );
 
           if (!parcel) {
-            alert("قطعه پیدا نشد. نمونه: EG-1001");
+            alert("شناسه پیدا نشد. برای نمونه EG-1001 را وارد کن.");
             return;
           }
 
-          selectParcel(parcel);
+          showParcel(parcel, true);
         };
 
         document.getElementById("search").addEventListener(
@@ -369,31 +515,27 @@
         );
 
         document.getElementById("resetBtn").onclick = function () {
-          globe.pointOfView({ lat: 20, lng: 10, altitude: 2.3 }, 900);
+          if (!globe) return;
+
+          globe.pointOfView({
+            lat: 20,
+            lng: 10,
+            altitude: 2.3
+          }, 900);
         };
 
+        showParcel(parcels[0], false);
+
         status.textContent =
-          "تعداد قطعات آزمایشی: " +
+          "شبکه آماده است | تعداد قطعات آزمایشی: " +
           parcels.length.toLocaleString("en-US") +
-          " | خطوط نارنجی مرز شبکه هستند.";
-
-        document.getElementById("parcelId").textContent =
-          parcels[0].properties.id;
-
-        document.getElementById("latitude").textContent =
-          parcels[0].properties.lat.toFixed(2) + "°";
-
-        document.getElementById("longitude").textContent =
-          parcels[0].properties.lon.toFixed(2) + "°";
-
-        document.getElementById("price").textContent =
-          parcels[0].properties.price.toLocaleString("en-US") + " USD";
+          " | مرزهای نارنجی نشان‌دهنده شبکه هستند.";
 
         loading.style.display = "none";
 
       } catch (error) {
         console.error(error);
-        fail(error.message || "خطای ناشناخته");
+        showError(error.message || "خطای ناشناخته");
       }
     })();
   </script>
